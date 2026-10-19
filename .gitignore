@@ -1,0 +1,13 @@
+# Obsidian — local machine state (changes constantly, don't version)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+
+# Obsidian trash
+.trash/
+
+# OS files
+.DS_Store
+
+# Temporary files
+*.tmp
