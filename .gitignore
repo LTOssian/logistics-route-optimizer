@@ -1,7 +1,5 @@
 # Obsidian — local machine state (changes constantly, don't version)
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/cache
+.obsidian/*
 
 # Obsidian trash
 .trash/
