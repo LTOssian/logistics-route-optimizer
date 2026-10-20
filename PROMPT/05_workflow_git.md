@@ -4,13 +4,12 @@
 
 | Branche | Rôle | Qui y touche |
 |---|---|---|
-| `main` | **stable** : code + README | merges validés uniquement |
-| `documentation` | notes de lecture, `PLAN.md`, `PROMPT/`, rapport | rédaction |
-| `feat/<sujet>` | travail en cours (code) | une branche par phase/tâche |
+| `main` | **branche de travail unique** : code, docs, livrables | tout le monde |
+| `documentation` | (optionnel) notes de lecture | rédaction |
 
-- Les branches `feat/*` partent de `main` (ou de `documentation` si c'est de la doc).
-- Une branche de feature est **courte** : on la fusionne dès que les tests passent.
-- Fusionner `documentation` → `main` aux jalons (fin de phase) pour que le code et les docs vivent ensemble.
+- On travaille **directement sur `main`** : c'est la base commune.
+- Une branche `feat/*` reste possible pour une modification risquée, mais elle est **très courte** et fusionnée dès que les tests passent.
+- Pas de branche « fourre-tout » qui reste ouverte des semaines.
 
 ## Commits
 
@@ -39,7 +38,7 @@ Règles :
 ## Push et synchronisation
 
 - `git pull --rebase` avant de commencer à travailler (évite les merges de bruit).
-- Pousser régulièrement sur sa branche.
+- Pousser régulièrement sur `main`.
 - Ne **pas** force-push `main` ni `documentation` sans coordination.
 - Sur sa **propre** branche, si rebase nécessaire : `git push --force-with-lease`.
 
@@ -54,7 +53,7 @@ Le plugin **Obsidian Git** peut auto-committer/pousser périodiquement. Pour év
 
 ## Revue
 
-Pour une petite équipe, une revue légère suffit. Checklist avant de merger dans `main` :
+Pour une petite équipe, une revue légère suffit. Checklist avant de pousser sur `main` :
 
 - [ ] `make` compile sans warning (`-Werror`).
 - [ ] `make test` vert.
@@ -71,7 +70,7 @@ Une phase est terminée quand :
 2. Les critères de validation de la phase passent.
 3. Le README/état d'avancement est mis à jour.
 4. Le rapport reçoit la section correspondante (au fur et à mesure, pas à la fin).
-5. La branche est fusionnée dans `main` et poussée.
+5. Les changements sont sur `main` et poussés.
 
 ## Résolution de conflits (rappel)
 
