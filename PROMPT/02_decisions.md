@@ -16,6 +16,8 @@
 | Mesure du temps | `clock_gettime(CLOCK_MONOTONIC)` | mesure de durées fiable |
 | Noms de code | identifiants anglais, commentaires/rapport français | convention de l'écosystème C |
 | Aléatoire | graine fixe documentée | reproductibilité |
+| Branche de travail | `main` | base commune unique, moins de conflits |
+| Usage de l'IA | sobre ; doc nettoyée avant rendu | le professeur n'attend pas un projet « fait par IA » |
 
 ### Conséquence : pas de `exit()` dans les modules
 

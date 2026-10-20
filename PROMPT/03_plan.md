@@ -37,6 +37,8 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Mesure du temps | `clock()` / `gettimeofday()` / `CLOCK_MONOTONIC` | `CLOCK_MONOTONIC` | mesure de durées fiable, insensible à l'horloge système |
 | Noms de code | français / anglais | identifiants anglais, commentaires/rapport français | convention de l'écosystème C |
 | Aléatoire | non spécifié / graine fixe | graine fixe documentée | reproductibilité académique |
+| Branche de travail | `documentation` / `feat/*` / `main` | `main` | base commune unique, moins de conflits |
+| Usage de l'IA | libre / sobre | sobre ; doc nettoyée avant rendu | le professeur n'attend pas un projet « fait par IA » |
 
 ---
 
