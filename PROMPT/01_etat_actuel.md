@@ -5,8 +5,10 @@
 
 ## Branches
 
-- `main` : branche stable (README + `.gitignore`).
-- `documentation` : notes, plan et contexte agent. **C'est ici que le travail documentaire se fait.**
+- `main` : **branche de travail unique** (code, docs, livrables).
+- `documentation` : (optionnel) notes de lecture.
+
+> [!important] On travaille directement sur `main`. Voir `05_workflow_git.md`.
 
 ## Ce qui existe
 
@@ -54,4 +56,4 @@ Ordre recommandé :
 
 ## Conventions de branches
 
-Le travail de code se fait sur une branche dédiée (ex. `feat/phase1-dijkstra`) puis est fusionné. Voir `05_workflow_git.md`.
+Le travail se fait **directement sur `main`**. `documentation` n'est qu'une branche de notes optionnelle. Voir `05_workflow_git.md`.
