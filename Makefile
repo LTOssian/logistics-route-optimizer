@@ -1,22 +1,29 @@
 CC       = gcc
 CFLAGS   = -Wall -Wextra -Werror -std=c11 -g
+LDLIBS   = -lm
 BUILD    = build
 
-TEST_BIN = $(BUILD)/test_graph
-LIB_SRC  = src/graph.c
-TEST_SRC = tests/test_graph.c
-HEADERS  = src/graph.h
+LIB_SRC  = src/graph.c src/djikstra.c
+LIB_HDR  = src/graph.h src/djikstra.h
 
-all: $(TEST_BIN)
+TEST_GRAPH    = $(BUILD)/test_graph
+TEST_DJIKSTRA = $(BUILD)/test_djisktra
+TEST_BINS     = $(TEST_GRAPH) $(TEST_DJIKSTRA)
+
+all: $(TEST_BINS)
 
 $(BUILD):
 	mkdir -p $(BUILD)
 
-$(TEST_BIN): $(LIB_SRC) $(TEST_SRC) $(HEADERS) | $(BUILD)
-	$(CC) $(CFLAGS) -Isrc -o $(TEST_BIN) $(LIB_SRC) $(TEST_SRC)
+$(TEST_GRAPH): src/graph.c tests/test_graph.c src/graph.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ src/graph.c tests/test_graph.c
 
-test: $(TEST_BIN)
-	./$(TEST_BIN)
+$(TEST_DJIKSTRA): $(LIB_SRC) tests/test_djisktra.c $(LIB_HDR) | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) tests/test_djisktra.c $(LDLIBS)
+
+test: $(TEST_BINS)
+	./$(TEST_GRAPH)
+	./$(TEST_DJIKSTRA)
 
 clean:
 	rm -rf $(BUILD)
