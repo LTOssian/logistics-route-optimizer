@@ -172,32 +172,80 @@ reconstruire_chemin(came_from, n):
 
 Un graphe routier est **creux** (peu d'arêtes par nœud) et **orienté** (sens uniques) → **liste d'adjacence**.
 
+## `Edge` — une arête sortante
+
+| Champ | Type | Rôle |
+|---|---|---|
+| `to` | `int` | id du nœud **d'arrivée** |
+| `weight` | `double` | coût de l'arête (distance, temps, péage) |
+| `next` | `Edge*` | arête suivante dans la liste d'adjacence |
+
+`Edge` est un **maillon de LSC** : il ne stocke que la destination et le poids, **pas** la source (la source est le nœud dont la liste contient l'arête).
+
+## `Graph` — le graphe entier
+
+| Champ | Type | Rôle |
+|---|---|---|
+| `n` | `int` | nombre de nœuds |
+| `adj` | `Edge**` | tableau de `n` têtes de listes : `adj[i]` = arêtes sortant de `i` |
+
 ```c
 typedef struct Edge {
     int          to;
-    float        weight;
+    double       weight;
     struct Edge* next;
 } Edge;
 
 typedef struct Graph {
     int     n;        // nombre de nœuds
-    Edge**  adj;      // adj[i] = liste des voisins sortants de i
+    Edge**  adj;      // adj[i] = liste des arêtes sortant de i
 } Graph;
 ```
 
-- **Orienté** : chaque arête va d'un nœud vers un autre (sens unique).
-- **Poids** : distance, temps, ou coût (péage). Attention aux **unités** : l'heuristique doit être dans la **même unité** que `g`.
-- Une matrice d'adjacence `V×V` est trop coûteuse en mémoire pour des milliers de nœuds.
+```
+adj ──> [0] -> (to=1,w=5) -> (to=2,w=3) -> NULL
+        [1] -> (to=3,w=2) -> NULL
+        [2] -> NULL
+        [3] -> NULL
+```
+
+Exemple : depuis le nœud `0`, deux arêtes sortent (vers `1` et `2`).
+
+## Parcourir les voisins
+
+```c
+for (Edge* e = g->adj[n]; e != NULL; e = e->next) {
+    int    v = e->to;
+    double w = e->weight;
+    // relaxer (n -> v) avec le poids w
+}
+```
+
+> [!note] Mémoire
+> `adj` est un tableau de pointeurs alloué sur le tas ; chaque `Edge` aussi. Il faudra tout libérer (comme une LSC par nœud) à la fin.
+
+> [!warning] Unités
+> L'heuristique doit être exprimée dans la **même unité** que `g`. Une matrice d'adjacence `V×V` est trop coûteuse en mémoire pour des milliers de nœuds.
 
 ---
 
 # 7. Exemples d'heuristiques
 
-| Heuristique     | Formule                         | Admissible quand…                                                 |     |     |     |                                          |
-| --------------- | ------------------------------- | ----------------------------------------------------------------- | --- | --- | --- | ---------------------------------------- |
-| **Euclidienne** | `√(dx² + dy²)`                  | déplacements libres dans le plan                                  |     |     |     |                                          |
-| **Manhattan**   | `                               | dx                                                                | +   | dy  | `   | grille à 4 directions (pas de diagonale) |
-| **Haversine**   | distance grand-cercle (lat/lon) | coût = **distance** ; avec des routes, c'est une borne inférieure |     |     |     |                                          |
+| Heuristique | Formule | Admissible quand… |
+|---|---|---|
+| **Euclidienne** | `√(dx² + dy²)` | déplacements libres dans le plan |
+| **Manhattan** | `abs(dx) + abs(dy)` | grille à 4 directions (pas de diagonale) |
+| **Haversine** | distance grand-cercle (lat/lon) | coût = **distance** ; borne inférieure des routes |
+
+## Exemples numériques
+
+A = (0, 0), B = (3, 4) :
+- **Euclidienne** : `√(3² + 4²) = 5`
+- **Manhattan** : `abs(3) + abs(4) = 7`
+
+Paris (48.8566, 2.3522) → Lyon (45.7640, 4.8357) :
+- **Haversine** ≈ `392 km` (grand cercle)
+- route réelle ≈ `465 km` → l'heuristique **sous-estime** → **admissible**
 
 > [!warning] L'admissibilité dépend des mouvements et de l'unité
 > - **Manhattan** devient **inadmissible** si les déplacements **diagonaux** sont autorisés (elle surestime).
