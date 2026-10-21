@@ -37,18 +37,18 @@ Les structures linéaires (tableau, liste) ne suffisent pas : il faut représent
 
 ## 2. Définitions
 
-| Terme | Définition |
-|---|---|
-| **Sommet** (nœud) | Un objet du graphe (`V`). |
-| **Arête** | Un lien entre deux sommets (`E`). |
-| **Orienté** | L'arête a un sens : `u -> v` (sens unique). |
-| **Non orienté** | Le lien est symétrique : `u -- v`. |
-| **Pondéré** | Chaque arête a un coût / poids (distance, temps, prix). |
-| **Degré** | Nombre d'arêtes incidentes à un sommet (sortantes + entrantes si orienté). |
-| **Chemin** | Suite de sommets reliés par des arêtes. |
-| **Cycle** | Chemin qui revient à son point de départ. |
-| **Connexe** | Tout sommet est atteignable depuis tout autre. |
-| **DAG** | Graphe orienté **sans cycle** (*Directed Acyclic Graph*). |
+| Terme             | Définition                                                                 |
+| ----------------- | -------------------------------------------------------------------------- |
+| **Sommet** (nœud) | Un objet du graphe (`V`).                                                  |
+| **Arête**         | Un lien entre deux sommets (`E`).                                          |
+| **Orienté**       | L'arête a un sens : `u -> v` (sens unique).                                |
+| **Non orienté**   | Le lien est symétrique : `u -- v`.                                         |
+| **Pondéré**       | Chaque arête a un coût / poids (distance, temps, prix).                    |
+| **Degré**         | Nombre d'arêtes incidentes à un sommet (sortantes + entrantes si orienté). |
+| **Chemin**        | Suite de sommets reliés par des arêtes.                                    |
+| **Cycle**         | Chemin qui revient à son point de départ.                                  |
+| **Connexe**       | Tout sommet est atteignable depuis tout autre.                             |
+| **DAG**           | Graphe orienté **sans cycle** (*Directed Acyclic Graph*).                  |
 
 > [!note] Connexité d'un graphe orienté
 > - **Faiblement connexe** : connexe si on ignore le sens des arêtes.
@@ -74,13 +74,13 @@ Les structures linéaires (tableau, liste) ne suffisent pas : il faut représent
 
 Deux représentations classiques :
 
-| | Liste d'adjacence | Matrice d'adjacence |
-|---|---|---|
-| Mémoire | `O(V + E)` | `O(V²)` |
-| Voisins d'un sommet | `O(degré)` | `O(V)` |
-| Test d'arête `u–v` | `O(degré)` | `O(1)` |
-| Graphe creux | ✅ idéal | ❌ gaspillage |
-| Graphe dense | correct | ✅ |
+|                     | Liste d'adjacence | Matrice d'adjacence |
+| ------------------- | ----------------- | ------------------- |
+| Mémoire             | `O(V + E)`        | `O(V²)`             |
+| Voisins d'un sommet | `O(degré)`        | `O(V)`              |
+| Test d'arête `u–v`  | `O(degré)`        | `O(1)`              |
+| Graphe creux        | ✅ idéal           | ❌ gaspillage        |
+| Graphe dense        | correct           | ✅                   |
 
 > [!important] Choix du projet
 > Les graphes routiers sont **creux** (peu d'arêtes par nœud) et **orientés** (sens uniques) → on utilise une **liste d'adjacence**.

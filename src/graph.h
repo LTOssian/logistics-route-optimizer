@@ -18,9 +18,9 @@
  * Elle stocke la destination, le poids et un lien vers l'arête suivante.
  */
 typedef struct Edge {
-    int          to;      /**< id du nœud d'arrivée (0 <= to < n). */
-    double       weight;  /**< coût de l'arête (mètres, >= 0). */
-    struct Edge* next;    /**< arête suivante dans la liste d'adjacence. */
+  int to;            /**< id du nœud d'arrivée (0 <= to < n). */
+  double weight;     /**< coût de l'arête (mètres, >= 0). */
+  struct Edge *next; /**< arête suivante dans la liste d'adjacence. */
 } Edge;
 
 /**
@@ -31,9 +31,9 @@ typedef struct Edge {
  * `adj[i]` contient les arêtes qui partent du nœud `i`.
  */
 typedef struct Graph {
-    int    n;     /**< nombre de nœuds. */
-    int    m;     /**< nombre d'arêtes. */
-    Edge** adj;   /**< adj[i] = tête des arêtes sortant de i. */
+  int n;      /**< nombre de nœuds. */
+  int m;      /**< nombre d'arêtes. */
+  Edge **adj; /**< adj[i] = tête des arêtes sortant de i. */
 } Graph;
 
 /**
@@ -44,7 +44,7 @@ typedef struct Graph {
  *         l'allocation échoue.
  * @note À libérer avec graph_free().
  */
-Graph* graph_new(int n);
+Graph *graph_new(int n);
 
 /**
  * @brief Ajoute l'arête orientée `u -> v` de poids `w`.
@@ -57,7 +57,7 @@ Graph* graph_new(int n);
  *         l'allocation échoue (le graphe reste alors inchangé).
  * @note L'arête est insérée en tête de liste : coût O(1).
  */
-int graph_add_edge(Graph* g, int u, int v, double w);
+int graph_add_edge(Graph *g, int u, int v, double w);
 
 /**
  * @brief Charge un graphe depuis un fichier CSV canonique.
@@ -81,13 +81,13 @@ int graph_add_edge(Graph* g, int u, int v, double w);
  *         introuvable, format invalide, allocation échouée).
  * @note À libérer avec graph_free().
  */
-Graph* graph_load_csv(const char* path);
+Graph *graph_load_csv(const char *path);
 
 /**
  * @brief Libère le graphe et toutes ses arêtes.
  *
  * @param g graphe à libérer (NULL accepté).
  */
-void graph_free(Graph* g);
+void graph_free(Graph *g);
 
 #endif
