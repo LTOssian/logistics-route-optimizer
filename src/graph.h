@@ -18,7 +18,7 @@
  * Elle stocke la destination, le poids et un lien vers l'arête suivante.
  */
 typedef struct Edge {
-  int to;            /**< id du nœud d'arrivée (0 <= to < n). */
+  int to;            /**< id du nœud d'arrivée. */
   double weight;     /**< coût de l'arête (mètres, >= 0). */
   struct Edge *next; /**< arête suivante dans la liste d'adjacence. */
 } Edge;
@@ -27,37 +27,37 @@ typedef struct Edge {
  * @struct Graph
  * @brief Graphe orienté pondéré.
  *
- * Le champ `adj` est un tableau de `n` têtes de listes :
- * `adj[i]` contient les arêtes qui partent du nœud `i`.
+ * Le champ `adjacency` est un tableau de `node_count` têtes de listes :
+ * `adjacency[index]` contient les arêtes qui partent du nœud `index`.
  */
 typedef struct Graph {
-  int n;      /**< nombre de nœuds. */
-  int m;      /**< nombre d'arêtes. */
-  Edge **adj; /**< adj[i] = tête des arêtes sortant de i. */
+  int node_count;      /**< nombre de nœuds. */
+  int edge_count;      /**< nombre d'arêtes. */
+  Edge **adjacency;    /**< adjacency[index] = tête des arêtes sortant de index. */
 } Graph;
 
 /**
- * @brief Alloue un graphe à `n` nœuds et zéro arête.
+ * @brief Alloue un graphe à `node_count` nœuds et zéro arête.
  *
- * @param n nombre de nœuds (n >= 1).
- * @return le graphe alloué, ou NULL si `n` est invalide ou si
+ * @param node_count nombre de nœuds (node_count >= 1).
+ * @return le graphe alloué, ou NULL si `node_count` est invalide ou si
  *         l'allocation échoue.
  * @note À libérer avec graph_free().
  */
-Graph *graph_new(int n);
+Graph *graph_new(int node_count);
 
 /**
- * @brief Ajoute l'arête orientée `u -> v` de poids `w`.
+ * @brief Ajoute l'arête orientée `from -> to` de poids `weight`.
  *
- * @param g graphe cible (non NULL).
- * @param u nœud source (0 <= u < g->n).
- * @param v nœud destination (0 <= v < g->n).
- * @param w poids de l'arête (w >= 0).
+ * @param graph graphe cible (non NULL).
+ * @param from nœud source (0 <= from < graph->node_count).
+ * @param to nœud destination (0 <= to < graph->node_count).
+ * @param weight poids de l'arête (weight >= 0).
  * @return 1 en cas de succès, 0 si un paramètre est invalide ou si
  *         l'allocation échoue (le graphe reste alors inchangé).
  * @note L'arête est insérée en tête de liste : coût O(1).
  */
-int graph_add_edge(Graph *g, int u, int v, double w);
+int graph_add_edge(Graph *graph, int from, int to, double weight);
 
 /**
  * @brief Charge un graphe depuis un fichier CSV canonique.
@@ -73,8 +73,9 @@ int graph_add_edge(Graph *g, int u, int v, double w);
  * ...
  * @endcode
  *
- * La première ligne composée de deux entiers fournit `n` et `m`.
- * Chaque ligne composée de trois nombres fournit une arête `u,v,weight`.
+ * La première ligne composée de deux entiers fournit le nombre de nœuds
+ * et le nombre d'arêtes. Chaque ligne composée de trois nombres fournit
+ * une arête `u,v,weight`.
  *
  * @param path chemin du fichier à lire.
  * @return le graphe chargé, ou NULL en cas d'erreur (fichier
@@ -86,8 +87,8 @@ Graph *graph_load_csv(const char *path);
 /**
  * @brief Libère le graphe et toutes ses arêtes.
  *
- * @param g graphe à libérer (NULL accepté).
+ * @param graph graphe à libérer (NULL accepté).
  */
-void graph_free(Graph *g);
+void graph_free(Graph *graph);
 
 #endif

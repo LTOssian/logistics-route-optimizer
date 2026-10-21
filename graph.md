@@ -89,32 +89,33 @@ Deux représentations classiques :
 
 ```c
 typedef struct Edge {
-    int          to;      // nœud d'arrivée
-    double       weight;  // coût de l'arête
-    struct Edge* next;    // arête suivante
+    int          to;       // nœud d'arrivée
+    double       weight;   // coût de l'arête
+    struct Edge* next;     // arête suivante
 } Edge;
 
 typedef struct Graph {
-    int    n;     // nombre de nœuds
-    Edge** adj;   // adj[i] = arêtes sortant de i
+    int     node_count;    // nombre de nœuds
+    int     edge_count;    // nombre d'arêtes
+    Edge**  adjacency;     // adjacency[index] = arêtes sortant de index
 } Graph;
 ```
 
 ```
-adj ──> [0] -> (to=1,w=10) -> (to=3,w=5) -> NULL
-        [1] -> (to=2,w=1)  -> (to=3,w=2) -> NULL
-        [2] -> (to=4,w=4)  -> NULL
-        [3] -> (to=1,w=3)  -> (to=2,w=9) -> (to=4,w=2) -> NULL
-        [4] -> (to=0,w=7)  -> (to=2,w=6) -> NULL
+adjacency ──> [0] -> (to=1, weight=10) -> (to=3, weight=5) -> NULL
+              [1] -> (to=2, weight=1)  -> (to=3, weight=2) -> NULL
+              [2] -> (to=4, weight=4)  -> NULL
+              [3] -> (to=1, weight=3)  -> (to=2, weight=9) -> (to=4, weight=2) -> NULL
+              [4] -> (to=0, weight=7)  -> (to=2, weight=6) -> NULL
 ```
 
 ### Parcourir les voisins
 
 ```c
-for (Edge* e = g->adj[u]; e != NULL; e = e->next) {
-    int    v = e->to;
-    double w = e->weight;
-    // traiter l'arête u -> v
+for (Edge *edge = graph->adjacency[current]; edge != NULL; edge = edge->next) {
+    int    neighbor = edge->to;
+    double weight   = edge->weight;
+    // traiter l'arête current -> neighbor
 }
 ```
 
@@ -129,19 +130,20 @@ for (Edge* e = g->adj[u]; e != NULL; e = e->next) {
 - Complexité `O(V + E)`.
 
 ```c
-void bfs(const Graph* g, int src, int* visited) {
-    int* queue = malloc(sizeof(int) * g->n);
-    int head = 0, tail = 0;
+void bfs(const Graph *graph, int source, int *visited) {
+    int *queue = malloc(sizeof(int) * graph->node_count);
+    int head = 0;
+    int tail = 0;
 
-    queue[tail++] = src;
-    visited[src] = 1;
+    queue[tail++] = source;
+    visited[source] = 1;
 
     while (head < tail) {
-        int u = queue[head++];
-        for (Edge* e = g->adj[u]; e != NULL; e = e->next) {
-            if (!visited[e->to]) {
-                visited[e->to] = 1;
-                queue[tail++] = e->to;
+        int current = queue[head++];
+        for (Edge *edge = graph->adjacency[current]; edge != NULL; edge = edge->next) {
+            if (!visited[edge->to]) {
+                visited[edge->to] = 1;
+                queue[tail++] = edge->to;
             }
         }
     }
@@ -156,10 +158,11 @@ void bfs(const Graph* g, int src, int* visited) {
 - Complexité `O(V + E)`.
 
 ```c
-void dfs(const Graph* g, int u, int* visited) {
-    visited[u] = 1;
-    for (Edge* e = g->adj[u]; e != NULL; e = e->next) {
-        if (!visited[e->to]) dfs(g, e->to, visited);
+void dfs(const Graph *graph, int current, int *visited) {
+    visited[current] = 1;
+    for (Edge *edge = graph->adjacency[current]; edge != NULL; edge = edge->next) {
+        if (!visited[edge->to])
+            dfs(graph, edge->to, visited);
     }
 }
 ```
@@ -182,11 +185,11 @@ void dfs(const Graph* g, int u, int* visited) {
 
 On maintient pour chaque nœud la meilleure distance connue depuis la source :
 
-1. `dist[source] = 0`, les autres `= +∞`.
+1. `distances[source] = 0`, les autres `= +∞`.
 2. Répéter : prendre le nœud non traité de **plus petite distance**, le marquer traité, puis **relâcher** ses arêtes.
-3. Relâcher `u -> v` : si `dist[u] + w < dist[v]`, on améliore `dist[v]` et on mémorise `prev[v] = u`.
+3. Relâcher `current -> neighbor` : si `distances[current] + weight < distances[neighbor]`, on améliore `distances[neighbor]` et on mémorise `previous[neighbor] = current`.
 
-On reconstruit ensuite le chemin en remontant `prev`.
+On reconstruit ensuite le chemin en remontant `previous`.
 
 ---
 
@@ -226,10 +229,10 @@ On reconstruit ensuite le chemin en remontant `prev`.
 ### Cycle de vie
 
 ```c
-Graph* g = graph_new(5);          // 5 nœuds, 0 arête
-graph_add_edge(g, 0, 1, 10.0);    // 0 -> 1, poids 10
-graph_add_edge(g, 0, 3, 5.0);     // 0 -> 3, poids 5
-graph_free(g);                    // libère arêtes + tableau + struct
+Graph *graph = graph_new(5);              // 5 nœuds, 0 arête
+graph_add_edge(graph, 0, 1, 10.0);        // 0 -> 1, poids 10
+graph_add_edge(graph, 0, 3, 5.0);         // 0 -> 3, poids 5
+graph_free(graph);                        // libère arêtes + tableau + struct
 ```
 
 ### Format CSV canonique
@@ -252,17 +255,17 @@ u,v,weight
 
 - Aucun `exit()` : toute erreur renvoie `NULL` ou `0`.
 - `graph_new` / `graph_free` sont symétriques.
-- `graph_load_csv` vérifie que `g->m == m` (en-tête cohérent).
+- `graph_load_csv` vérifie que `graph->edge_count` correspond au nombre annoncé (en-tête cohérent).
 - Le graphe reste inchangé si `graph_add_edge` échoue.
 
 ---
 
 ## 10. Tests à écrire
 
-1. `graph_new(5)` → `n=5`, `m=0`.
-2. `graph_add_edge` valide → `m` incrémenté, voisin présent.
-3. `graph_add_edge` invalide (`u` hors bornes, poids négatif) → `0`, `m` inchangé.
-4. `graph_load_csv("data/toy/toy1.csv")` → `n=5`, `m=10`.
+1. `graph_new(5)` → `node_count=5`, `edge_count=0`.
+2. `graph_add_edge` valide → `edge_count` incrémenté, voisin présent.
+3. `graph_add_edge` invalide (`from`/`to` hors bornes, poids négatif) → `0`, `edge_count` inchangé.
+4. `graph_load_csv("data/toy/toy1.csv")` → `node_count=5`, `edge_count=10`.
 5. Degrés sortants : `0→2`, `1→2`, `2→1`, `3→3`, `4→2`.
 6. `graph_free` → valgrind propre (pas de fuite).
 
@@ -270,8 +273,8 @@ u,v,weight
 
 ## 11. Exercices
 
-1. Écrire `int graph_out_degree(const Graph* g, int u)`.
-2. Écrire `int graph_has_edge(const Graph* g, int u, int v)`.
+1. Écrire `int graph_out_degree(const Graph *graph, int node)`.
+2. Écrire `int graph_has_edge(const Graph *graph, int from, int to)`.
 3. Charger `toy1` et afficher tous les voisins de chaque nœud.
 4. BFS depuis `0` : afficher l'ordre de visite.
 5. Compter les composantes connexes (sur un graphe non orienté).
