@@ -9,3 +9,8 @@
 
 # Temporary files
 *.tmp
+
+# Build artifacts
+*.o
+build/
+
