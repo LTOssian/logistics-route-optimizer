@@ -1,6 +1,6 @@
 # 6. CVRP — plusieurs véhicules à capacité limitée
 
-Orateur : Faustine — 2 min
+Orateur : à définir — 2 min
 
 ## Message clé
 

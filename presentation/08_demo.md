@@ -1,6 +1,6 @@
 # 8. Démo live
 
-Orateur : Louisan — 1 min 30
+Orateur : à définir — 1 min 30
 
 ## Message clé
 

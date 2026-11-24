@@ -1,6 +1,6 @@
 # 9. Conclusion et limites
 
-Orateur : Faustine — 1 min
+Orateur : à définir — 1 min
 
 ## Message clé
 
