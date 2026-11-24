@@ -1,0 +1,2 @@
+# Extraction OSM brute et cache OSMnx (ox.settings.cache_folder = "data/osm/raw/cache")
+osm/raw/
