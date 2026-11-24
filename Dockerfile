@@ -10,7 +10,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Certificat racine supplémentaire, facultatif (réseau d'entreprise qui inspecte le TLS).
-# Usage : docker build --secret id=extra_ca,src=mon_ca.pem -t lro-dev:1 .
+# Fourni par compose.yaml via la variable EXTRA_CA_FILE (fichier vide par défaut)
 RUN --mount=type=secret,id=extra_ca,required=false \
     if [ -s /run/secrets/extra_ca ]; then \
       cp /run/secrets/extra_ca /usr/local/share/ca-certificates/extra.crt && update-ca-certificates; \
@@ -20,10 +20,11 @@ RUN --mount=type=secret,id=extra_ca,required=false \
 ENV PIP_CERT=/etc/ssl/certs/ca-certificates.crt \
     REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-# Dépendances Python dans un venv, versions figées dans scripts/requirements.txt
-COPY scripts/requirements.txt /tmp/requirements.txt
+# Dépendances Python dans un venv : requirements.txt liste ce qu'on utilise,
+# requirements.lock fige toutes les versions (dépendances indirectes comprises)
+COPY scripts/requirements.txt scripts/requirements.lock /tmp/
 RUN python3 -m venv /opt/venv \
- && /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+ && /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt -c /tmp/requirements.lock
 
 ENV PATH="/opt/venv/bin:$PATH" \
     HOME=/tmp \
