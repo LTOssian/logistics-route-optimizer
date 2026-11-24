@@ -12,7 +12,7 @@
 5. `05_workflow_git.md` — branches, commits, PR, Docker.
 6. `06_references.md` — articles et notes de lecture.
 7. `07_agent_instructions.md` — le prompt système à donner à l'agent.
-8. `08_glossaire.md` — définitions des termes du projet.
+8. `../presentation/glossaire.md` — définitions des termes du projet.
 
 ## Règle d'or
 
