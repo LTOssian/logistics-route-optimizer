@@ -1,6 +1,6 @@
 # 7. Résultats
 
-Orateur : Sofia — 2 min
+Orateur : à définir — 2 min
 
 ## Message clé
 

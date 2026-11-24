@@ -15,15 +15,15 @@ Les chiffres marqués `À MESURER` viennent des benchmarks (phase 7). On n'écri
 
 | # | Partie | Durée | Fin à | Orateur |
 |---|---|---|---|---|
-| 1 | [[01_probleme\|Problème et modélisation]] | 1:30 | 1:30 | Sofia |
-| 2 | [[02_donnees_osm\|Des données OSM au graphe]] | 1:30 | 3:00 | Sofia |
-| 3 | [[03_dijkstra\|Dijkstra]] | 2:00 | 5:00 | Louisan |
-| 4 | [[04_astar\|A\*]] | 1:30 | 6:30 | Louisan |
-| 5 | [[05_tsp\|Matrice de distances et TSP]] | 2:00 | 8:30 | Faustine |
-| 6 | [[06_cvrp\|CVRP]] | 2:00 | 10:30 | Faustine |
-| 7 | [[07_resultats\|Résultats]] | 2:00 | 12:30 | Sofia |
-| 8 | [[08_demo\|Démo live]] | 1:30 | 14:00 | Louisan |
-| 9 | [[09_conclusion\|Conclusion et limites]] | 1:00 | 15:00 | Faustine |
+| 1 | [[01_probleme\|Problème et modélisation]] | 1:30 | 1:30 | à définir |
+| 2 | [[02_donnees_osm\|Des données OSM au graphe]] | 1:30 | 3:00 | à définir |
+| 3 | [[03_dijkstra\|Dijkstra]] | 2:00 | 5:00 | à définir |
+| 4 | [[04_astar\|A\*]] | 1:30 | 6:30 | à définir |
+| 5 | [[05_tsp\|Matrice de distances et TSP]] | 2:00 | 8:30 | à définir |
+| 6 | [[06_cvrp\|CVRP]] | 2:00 | 10:30 | à définir |
+| 7 | [[07_resultats\|Résultats]] | 2:00 | 12:30 | à définir |
+| 8 | [[08_demo\|Démo live]] | 1:30 | 14:00 | à définir |
+| 9 | [[09_conclusion\|Conclusion et limites]] | 1:00 | 15:00 | à définir |
 
 Questions du prof : voir [[questions_jury]].
 

@@ -1,6 +1,6 @@
 # 3. Dijkstra
 
-Orateur : Louisan — 2 min
+Orateur : à définir — 2 min
 
 ## Message clé
 

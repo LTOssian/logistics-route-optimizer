@@ -1,6 +1,6 @@
 # 1. Problème et modélisation
 
-Orateur : Sofia — 1 min 30
+Orateur : à définir — 1 min 30
 
 ## Message clé
 

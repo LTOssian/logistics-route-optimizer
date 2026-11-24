@@ -1,6 +1,6 @@
 # 4. A\*
 
-Orateur : Louisan — 1 min 30
+Orateur : à définir — 1 min 30
 
 ## Message clé
 
@@ -40,4 +40,4 @@ A\* explore beaucoup moins de nœuds que Dijkstra et trouve exactement la même 
 
 ## Transition
 
-> On sait aller d'un point à un autre. Maintenant on a N clients à livrer : je passe la parole à Faustine.
+> On sait aller d'un point à un autre. Maintenant on a N clients à livrer.

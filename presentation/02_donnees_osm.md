@@ -1,6 +1,6 @@
 # 2. Des données OSM au graphe
 
-Orateur : Sofia — 1 min 30
+Orateur : à définir — 1 min 30
 
 ## Message clé
 
@@ -47,4 +47,4 @@ On récupère le vrai réseau routier de Lyon avec un script Python, et le C ne 
 
 ## Transition
 
-> Maintenant qu'on a le graphe, Louisan va vous montrer comment on y calcule un plus court chemin.
+> Maintenant qu'on a le graphe, voyons comment on y calcule un plus court chemin.
