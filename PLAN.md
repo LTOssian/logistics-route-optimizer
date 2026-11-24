@@ -38,10 +38,11 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Gestion d'erreurs | `exit()` partout / codes de retour | propager (`NULL`/statut), `exit()` seulement dans `main` | le C doit pouvoir devenir une lib appelée par un serveur |
 | Mesure du temps | `clock()` / `gettimeofday()` / `CLOCK_MONOTONIC` | `CLOCK_MONOTONIC` | mesure de durées fiable, insensible à l'horloge système |
 | Noms de code | français / anglais | identifiants anglais, commentaires/rapport français | convention de l'écosystème C |
-| Aléatoire | non spécifié / graine fixe | graine fixe documentée | reproductibilité académique |
+| Aléatoire | `rand()` / générateur maison | générateur maison (`src/rng.{h,c}`, xorshift), graine fixe documentée | `rand()` donne des suites différentes selon la libc (macOS, Linux) : avec notre générateur, la graine 42 tire les mêmes points partout |
 | Branches | tout sur `main` / une branche par issue | une branche par issue, PR vers `main` ; `documentation` pour la doc Obsidian ; `presentation` pour les diapos | à trois en asynchrone, la CI vérifie chaque PR avant le merge |
 | Environnement | installations locales / Docker | image Docker commune (`compose.yaml`) | mêmes versions de gcc, valgrind et OSMnx pour tout le monde, et pour la démo |
-| Usage de l'IA | libre / sobre | sobre ; doc nettoyée avant rendu | le professeur n'attend pas un projet « fait par IA » |
+| Usage de l'IA | libre / sobre | sobre, et déclaré : section « Usage de l'IA » du README ; `PROMPT/` conservé | le professeur n'attend pas un projet « fait par IA » ; le dépôt est public et l'historique garde tout, donc on assume plutôt que de cacher |
+| Branche rendue | `main` / `documentation` | `main`, dans laquelle on merge `documentation` avant le rendu | code, plan et rapport au même endroit, avec un seul `PLAN.md` à jour |
 
 ---
 
@@ -139,7 +140,7 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Orientation | non orienté / orienté | non orienté (chaque rue exportée dans les deux sens) | matrice symétrique, donc 2-opt classique ; les sens uniques sont cités dans les limites |
 | Précision de l'export | arrondie / pleine | pleine précision (`repr`) pour les poids et les coordonnées | un poids arrondi vers le bas peut devenir plus court que le vol d'oiseau, et Haversine ne serait plus admissible |
 | Poids | distance / temps | distance | cohérent avec l'heuristique |
-| Versionnement des données | tout committer / tout ignorer | ignorer le brut, committer un échantillon + le script | éviter de gonfler le repo ; reproductible |
+| Versionnement des données | tout committer / tout ignorer | committer les 4 jeux exportés (`data/osm/lyon_<R>/`) avec leur `meta.txt` ; ignorer le brut et le cache ; ne plus régénérer après le gel du code | une nouvelle extraction change la numérotation des nœuds : la démo et les chiffres des diapos ne correspondraient plus |
 | Reproductibilité | non documenté / documenter | date d'extraction + version OSMnx | les données OSM changent dans le temps |
 
 **Validation :** nombre de nœuds/arêtes identique entre Python et C ; distances plausibles ; garder la plus grande composante connexe.
@@ -275,7 +276,7 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
 | Outil des diapos | PowerPoint / Google Slides / Marp | Marp (Markdown) | versionné dans git, éditable par les trois, export PDF/HTML |
-| Démo | captures / live | live dans le conteneur Docker, avec une vidéo en secours | montre que l'outil fonctionne ; la vidéo protège d'un plantage |
+| Démo | captures / live | live, chaque commande lancée via `docker compose run` depuis `demo.sh`, avec une vidéo en secours | montre que l'outil fonctionne ; la vidéo protège d'un plantage |
 | Répartition | une personne / chacun sa partie | chacun présente ce qu'il a codé | chacun peut défendre son code |
 | Chiffres | estimés / mesurés | uniquement ceux de `benchmarks/results/` | pas de résultat inventé |
 
@@ -290,13 +291,23 @@ Le rapport (phase 8) est écrit par tous : chacun rédige la section de ses phas
 | mar. 24 – mer. 25 nov. | Docker mergé ; phase 1 terminée (tas, CLI, renommage) ; pipeline OSM ; TSP sur des matrices jouets |
 | jeu. 26 – ven. 27 nov. | A\* ; matrice ; CVRP sur des matrices jouets ; script de benchmarks |
 | sam. 28 – lun. 30 nov. | tout branché sur Lyon ; benchmarks et figures ; **gel du code lundi soir** |
-| mar. 1 – mer. 2 déc. | diapos avec les vrais chiffres ; rapport ; vidéo de secours |
+| mar. 1 – mer. 2 déc. | diapos avec les vrais chiffres ; rapport ; vidéo de secours ; merge de `documentation` dans `main` (version rendue) |
 | jeu. 3 déc. | deux répétitions chronométrées |
 | ven. 4 déc. | soutenance |
 
 Le TSP et le CVRP ne dépendent que d'une matrice de distances : ils peuvent être codés et testés sur des matrices jouets (ou TSPLIB / CVRPLIB) avant que la phase 4 soit prête.
 
-**Validation :** répétition complète en moins de 15 minutes ; démo jouée de bout en bout sur une machine propre (`docker compose build` puis `demo.sh`).
+**Coupes si on prend du retard**, dans cet ordre (on coupe le premier point avant de toucher au suivant) :
+
+1. Figure des nœuds explorés Dijkstra / A\* (#12) : remplacée par le chiffre seul.
+2. Graphe de 4000 m : on garde trois tailles.
+3. Benchmark B2 réduit à N = 10, 50, 200.
+4. Or-opt seulement à l'intérieur d'une tournée.
+5. Instances berlin52 et A-n32-k5 : on garde Held-Karp comme seule référence pour le TSP.
+
+On ne coupe jamais : Dijkstra avec tas, A\*, NN + 2-opt, Clarke & Wright, les tests, la démo et sa vidéo de secours.
+
+**Validation :** répétition complète en 13 min 30 au plus (15 min max, la marge sert aux transitions et aux imprévus) ; démo jouée de bout en bout sur une machine propre (`docker compose build` puis `demo.sh`).
 
 ---
 
