@@ -10,9 +10,7 @@
 # Temporary files
 *.tmp
 
-# Build C
+# Build artifacts
+*.o
 build/
 
-# Données OSM brutes et cache OSMnx (régénérés par scripts/)
-data/osm/raw/
-cache/
