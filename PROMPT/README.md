@@ -7,26 +7,27 @@
 
 1. `00_contexte_projet.md` — la consigne et les objectifs.
 2. `01_etat_actuel.md` — où en est le dépôt aujourd'hui.
-3. `02_decisions.md` — les décisions techniques validées (et les points ouverts).
-4. `03_plan.md` — le plan par phases (copie de `../PLAN.md`).
-5. `04_conventions.md` — style C, mémoire, erreurs, build, tests.
-6. `05_workflow_git.md` — branches, commits, push.
-7. `06_references.md` — articles et notes de lecture.
-8. `07_agent_instructions.md` — le prompt système à donner à l'agent.
-9. `08_glossaire.md` — définitions des termes du projet.
+3. `../PLAN.md` — décisions validées et plan par phases (source unique).
+4. `04_conventions.md` — style C, mémoire, erreurs, build, tests.
+5. `05_workflow_git.md` — branches, commits, PR, Docker.
+6. `06_references.md` — articles et notes de lecture.
+7. `07_agent_instructions.md` — le prompt système à donner à l'agent.
+8. `08_glossaire.md` — définitions des termes du projet.
 
 ## Règle d'or
 
 - Le code est en **C** (C11). Les algorithmes vont dans `src/`, les tests dans `tests/`, les données dans `data/`.
-- Ne pas modifier l'architecture ni les décisions de `02_decisions.md` sans validation du groupe.
-- Toujours compiler avec `-Wall -Wextra -Werror` et lancer les tests avant de committer.
+- Ne pas modifier l'architecture ni les décisions de `../PLAN.md` sans validation du groupe.
+- Toujours compiler avec `-Wall -Wextra -Werror` et lancer les tests (dans Docker) avant de committer.
 
 ## Arborescence cible
 
 ```
 .
 ├── PLAN.md
+├── TASKS.md
 ├── PROMPT/
+├── presentation/
 ├── etudes/
 ├── report/
 ├── src/
@@ -34,5 +35,7 @@
 ├── data/
 ├── benchmarks/
 ├── scripts/
+├── Dockerfile
+├── compose.yaml
 └── Makefile
 ```
