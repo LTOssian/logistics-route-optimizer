@@ -14,7 +14,9 @@ Projet d'optimisation de tournées logistiques : implémentation et comparaison 
 
 ```
 .
-├── PLAN.md              # plan validé (phases 0 → 8)
+├── PLAN.md              # plan validé (phases 0 → 9)
+├── TASKS.md             # tâches jusqu'à la soutenance
+├── presentation/        # base de texte de la soutenance
 ├── etudes/              # notes de lecture des articles
 ├── report/              # rapport académique (à venir)
 ├── src/                 # code C (à venir)
@@ -36,7 +38,7 @@ make clean  # nettoie les artefacts
 
 - [x] Notes de lecture : Dijkstra, A\*, Contraction Hierarchies
 - [x] Décisions techniques et plan validés
-- [ ] Phase 1 — Dijkstra sur graphe jouet
+- [ ] Phase 1 — Dijkstra sur graphe jouet (V1 faite, tas en cours)
 - [ ] Phase 2 — A\*
 - [ ] Phase 3 — pipeline OSM
 - [ ] Phase 4 — matrice de distances
@@ -44,8 +46,17 @@ make clean  # nettoie les artefacts
 - [ ] Phase 6 — CVRP
 - [ ] Phase 7 — benchmarks
 - [ ] Phase 8 — rapport
+- [ ] Phase 9 — soutenance (vendredi 4 décembre 2026)
 
 ## Documents
 
 - Plan détaillé : [`PLAN.md`](PLAN.md)
 - Notes de lecture : [`etudes/`](etudes/)
+- Tâches : [`TASKS.md`](TASKS.md), issues GitHub du milestone « Soutenance »
+- Soutenance : [`presentation/`](presentation/) (texte), branche `presentation` (diapos)
+
+## Branches
+
+- `main` : code testé, une PR par issue, CI obligatoire.
+- `documentation` : ce vault Obsidian (plan, tâches, notes, soutenance, rapport).
+- `presentation` : diapos Marp.
