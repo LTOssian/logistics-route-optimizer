@@ -8,21 +8,18 @@ On construit une tournée rapide avec le plus proche voisin, puis 2-opt la racco
 
 ## Diapos
 
-**Diapo 11 — Matrice de distances**
+**Diapo 9 — De la matrice à la tournée**
 
 - Points : le dépôt et N clients tirés au hasard parmi les nœuds du graphe (graine fixe).
 - Un Dijkstra par point, qu'on arrête dès que tous les autres points sont extraits du tas (leur distance est alors définitive).
 - Matrice dense `(N+1) × (N+1)` (dépôt compris), symétrique car le graphe est non orienté.
 - Complexité : `O(N · (V + E) log V)`.
-
-**Diapo 12 — Plus proche voisin puis 2-opt**
-
 - Tournée fermée : départ et retour au dépôt.
 - Plus proche voisin : aller toujours au client non visité le plus proche. `O(N²)`.
 - 2-opt : on retire deux arêtes `(a, b)` et `(c, d)`, on reconnecte en `(a, c)` et `(b, d)` en inversant le segment entre les deux. On garde le changement si `d(a,b) + d(c,d) > d(a,c) + d(b,d)`. On recommence jusqu'à ce qu'aucun échange n'améliore. `O(N²)` par passe.
 - Schéma : une tournée qui se croise, puis décroisée.
 
-**Diapo 13 — Est-ce que c'est bon ?**
+**Diapo 10 — Est-ce que c'est bon ?**
 
 - Référence exacte : Held-Karp (programmation dynamique, `O(N² · 2^N)`), utilisé jusqu'à 15 points (la mémoire en `N · 2^N` limite au-delà).
 - Instance publique `berlin52` (TSPLIB), dont l'optimum est publié.
