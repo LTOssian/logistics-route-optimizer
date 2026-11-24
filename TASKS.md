@@ -1,6 +1,6 @@
 # Tâches — soutenance du vendredi 4 décembre
 
-On coche ici au fil de l'eau, et on ferme l'issue GitHub correspondante quand la PR est mergée. Le détail de chaque tâche est dans l'issue, les décisions dans [[PLAN]].
+Ce fichier ne se modifie que sur la branche `documentation` (la copie de la branche `presentation` n'est pas suivie). On coche ici au fil de l'eau, et on ferme l'issue GitHub correspondante quand la PR est mergée. Le détail de chaque tâche est dans l'issue, les décisions dans [[PLAN]].
 
 Pour prendre une tâche : s'assigner sur l'issue GitHub correspondante.
 
