@@ -59,7 +59,6 @@ Louisan Tchitoula · Sofia · Faustine
 
 ---
 
-<span class="speaker">Sofia</span>
 
 # Le problème
 
@@ -74,7 +73,6 @@ Louisan Tchitoula · Sofia · Faustine
 
 ---
 
-<span class="speaker">Sofia</span>
 
 # Quatre étages, chacun construit sur le précédent
 
@@ -92,7 +90,6 @@ Louisan Tchitoula · Sofia · Faustine
 
 ---
 
-<span class="speaker">Sofia</span>
 
 # D'OpenStreetMap au CSV
 
@@ -110,7 +107,6 @@ Louisan Tchitoula · Sofia · Faustine
 
 ---
 
-<span class="speaker">Sofia</span>
 
 # Le graphe en C
 
@@ -127,7 +123,6 @@ Louisan Tchitoula · Sofia · Faustine
 
 ---
 
-<span class="speaker">Louisan</span>
 
 # Dijkstra
 
@@ -148,7 +143,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Louisan</span>
 
 # Deux versions, deux ordres de grandeur
 
@@ -168,7 +162,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Louisan</span>
 
 # Comment on sait que c'est juste
 
@@ -179,7 +172,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Louisan</span>
 
 # A\* : Dijkstra avec une boussole
 
@@ -191,7 +183,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Louisan</span>
 
 # Pourquoi c'est encore optimal
 
@@ -204,7 +195,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Faustine</span>
 
 # Matrice de distances
 
@@ -215,7 +205,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Faustine</span>
 
 # TSP : plus proche voisin, puis 2-opt
 
@@ -234,7 +223,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Faustine</span>
 
 # Est-ce que c'est bon ?
 
@@ -248,7 +236,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Faustine</span>
 
 # CVRP : Clarke & Wright (1964)
 
@@ -266,7 +253,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Faustine</span>
 
 # Or-opt et vérifications
 
@@ -277,7 +263,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Sofia</span>
 
 # Résultats : plus court chemin
 
@@ -287,7 +272,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Sofia</span>
 
 # Résultats : tournées
 
@@ -302,7 +286,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 <!-- _class: lead -->
 
-<span class="speaker">Louisan</span>
 
 # Démo
 
@@ -312,7 +295,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Faustine</span>
 
 # Bilan
 
@@ -323,7 +305,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-<span class="speaker">Faustine</span>
 
 # Limites et suites
 

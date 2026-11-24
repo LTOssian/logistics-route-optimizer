@@ -4,7 +4,7 @@ Source unique : `soutenance.md` (Marp). Le texte de chaque partie est sur la bra
 
 - Les cadres en pointillés sont des emplacements d'images : mettre les PNG dans `img/` et remplacer le cadre par `![](img/nom.png)`.
 - Les valeurs en rouge (`À MESURER`) doivent venir de `benchmarks/results/`. Il ne doit plus en rester le 2 décembre.
-- Le nom de l'orateur est en haut à droite de chaque diapo. Les notes orateur sont dans les commentaires `<!-- -->`.
+- Pour indiquer l'orateur d'une diapo : `<span class="speaker">Prénom</span>` sous le titre. Les notes orateur sont dans les commentaires `<!-- -->`.
 
 ## Générer
 
