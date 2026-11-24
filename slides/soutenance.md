@@ -39,6 +39,8 @@ style: |
   .pipeline div { border: 2px solid var(--accent); border-radius: 8px; padding: 8px 12px; font-size: 19px; background: #fff; text-align: center; }
   .pipeline span { color: var(--accent); font-size: 22px; }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .note { font-size: 18px; color: var(--muted); margin-top: 10px; }
+  .ph.short { min-height: 160px; }
   .ph { border: 2px dashed var(--line); border-radius: 8px; color: var(--muted); display: flex; align-items: center; justify-content: center; text-align: center; min-height: 260px; font-size: 20px; padding: 16px; }
   section.lead { background: var(--ink); color: #fff; justify-content: center; }
   section.lead h1 { color: #fff; font-size: 56px; }
@@ -53,68 +55,58 @@ style: |
 
 Plus court chemin, TSP et CVRP sur le réseau routier de Lyon
 
-Louisan Tchitoula · Sofia · Faustine
+Louisan Tchitoula · Sofia <span class="todo">NOM</span> · Faustine <span class="todo">NOM</span>
 
-<!-- Sofia : présentation du groupe, 10 secondes. -->
+<span class="todo">Nom du cours</span>
 
----
-
-
-# Le problème
-
-- Un entrepôt, **N clients**, chaque client a une demande
-- Plusieurs camionnettes de **capacité Q**
-- Trois questions :
-  - quel chemin entre deux adresses ?
-  - dans quel ordre livrer ?
-  - quel client dans quel camion ?
-
-<!-- Texte complet : presentation/01_probleme.md -->
+<!-- Partie 1 : presentation/01_probleme.md -->
 
 ---
 
+# Le problème et sa modélisation
 
-# Quatre étages, chacun construit sur le précédent
+- Un entrepôt, **N clients** avec une demande, des camionnettes de **capacité Q**
+- Quel chemin entre deux adresses ? Dans quel ordre livrer ? Quel client dans quel camion ?
 
 <div class="pipeline">
   <div>OpenStreetMap</div><span>→</span>
   <div>Graphe<br><small>G = (V, E)</small></div><span>→</span>
   <div>Plus court chemin<br><small>Dijkstra, A*</small></div><span>→</span>
-  <div>Matrice<br><small>N × N</small></div><span>→</span>
+  <div>Matrice<br><small>dépôt + N clients</small></div><span>→</span>
   <div>TSP<br><small>1 véhicule</small></div><span>→</span>
-  <div>CVRP<br><small>K véhicules</small></div>
+  <div>CVRP<br><small>plusieurs véhicules</small></div>
 </div>
 
 - Nœuds = intersections, arêtes = rues, poids = longueur en mètres
-- TSP et CVRP sont NP-difficiles : heuristiques + mesure de l'écart à l'optimum
+- TSP et CVRP sont NP-difficiles : heuristiques + écart à l'optimum
 
 ---
-
 
 # D'OpenStreetMap au CSV
 
 <div class="cols">
 <div>
 
-- OSMnx (Python) télécharge les routes autour de Bellecour
+- OSMnx (Python) télécharge les routes dans un **carré** de demi-côté R autour de Bellecour
 - Plus grande composante connexe
 - Identifiants renumérotés de 0 à n−1
-- `nodes.csv`, `edges.csv`, `meta.txt`
+- `nodes.csv`, `edges.csv`, `meta.txt`, en pleine précision
 
 </div>
-<div class="ph">Carte du réseau, rayon 2000 m<br>(slides/img/lyon_2000.png, #12)</div>
+<div class="ph">Carte du réseau, R = 2000 m<br>(slides/img/lyon_2000.png, #12)</div>
 </div>
+
+<!-- Partie 2 : presentation/02_donnees_osm.md -->
 
 ---
 
-
 # Le graphe en C
 
-- Liste d'adjacence : un réseau routier a 2 à 3 rues par intersection
+- Liste d'adjacence : 2 à 3 rues par intersection
 - Une matrice V × V de `double` pour 10 000 nœuds : 800 Mo
 - Graphe non orienté : chaque rue dans les deux sens
 
-| Rayon | Nœuds | Arêtes |
+| Demi-côté R | Nœuds | Arêtes |
 |---|---|---|
 | 500 m | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
 | 1000 m | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
@@ -123,10 +115,8 @@ Louisan Tchitoula · Sofia · Faustine
 
 ---
 
-
 # Dijkstra
 
-- `dist[source] = 0`, les autres à `INFINITY`
 - Extraire le nœud non traité le plus proche, le figer, relâcher ses arêtes
 - **Invariant** : un nœud extrait a sa distance définitive, car les poids sont ≥ 0
 - Chemin reconstruit avec `prev[]`, de la cible vers la source
@@ -141,20 +131,25 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 }
 ```
 
+<div class="note">Extrait simplifié de src/dijkstra.c</div>
+
+<!-- Partie 3 : presentation/03_dijkstra.md -->
+
 ---
 
-
-# Deux versions, deux ordres de grandeur
+# Deux versions, et comment on sait que c'est juste
 
 <div class="cols">
 <div>
 
-| | Choix du minimum | Complexité |
+| | Minimum | Complexité |
 |---|---|---|
-| V1 | parcours du tableau | `O(V²)` |
+| V1 | tableau | `O(V²)` |
 | V2 | tas binaire | `O((V+E) log V)` |
 
-- Lazy deletion : on réinsère, et on ignore les entrées périmées au pop
+- Lazy deletion : on réinsère, et on ignore les entrées périmées
+- Tests : graphe jouet du CLRS, inatteignable, source invalide
+- <span class="todo">Oracle exhaustif (≤ 8 nœuds) : à écrire, #1</span>
 
 </div>
 <div class="ph">Courbe B1 : temps V1 / V2 / A* selon V</div>
@@ -162,71 +157,56 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 ---
 
-
-# Comment on sait que c'est juste
-
-- Graphe jouet du CLRS, distances connues
-- **Oracle exhaustif** : tous les chemins simples sur ≤ 8 nœuds
-- Cas limites : inatteignable, source invalide, source = cible
-- `make test` + valgrind dans la CI, à chaque PR
-
----
-
-
 # A\* : Dijkstra avec une boussole
 
-- `f(n) = g(n) + h(n)`
-- `g` : distance parcourue ; `h` : vol d'oiseau (Haversine) jusqu'à la cible
-- Hart, Nilsson et Raphael (1968) : A\* est optimal si `h` ne surestime jamais
+<div class="cols">
+<div>
 
+- `f(n) = g(n) + h(n)`
+- `g` : distance parcourue
+- `h` : vol d'oiseau (Haversine) jusqu'à la cible
+- Hart, Nilsson et Raphael (1968) : optimal si `h` ne surestime jamais
+
+</div>
 <div class="ph">Nœuds explorés : Dijkstra (disque) vs A* (ellipse vers la cible)</div>
+</div>
+
+<!-- Partie 4 : presentation/04_astar.md -->
 
 ---
-
 
 # Pourquoi c'est encore optimal
 
 - **Admissible** : une route est au moins aussi longue que la ligne droite
 - **Consistante** : `h(u) ≤ w(u,v) + h(v)`, donc pas de réouverture
 - Arrêt quand la cible **sort** du tas
-- Vérifié : `astar == dijkstra` sur toutes les requêtes
+- Même distance que Dijkstra sur toutes nos requêtes (à 1e-9 près)
 
-<div class="key">A* explore <span class="todo">À MESURER</span> % des nœuds de Dijkstra</div>
-
----
-
-
-# Matrice de distances
-
-- Dépôt + N clients tirés au hasard (graine 42)
-- Un Dijkstra par point, arrêté dès que tous les points sont atteints
-- Matrice dense, symétrique
-- `O(N · (V + E) log V)`
+<div class="key">À requête égale (arrêt à la cible pour les deux), A* explore <span class="todo">À MESURER</span> % des nœuds de Dijkstra</div>
 
 ---
 
-
-# TSP : plus proche voisin, puis 2-opt
+# De la matrice à la tournée
 
 <div class="cols">
 <div>
 
+- Matrice **(N+1) × (N+1)** : un Dijkstra par point, arrêté quand tous les points sont extraits
 - Tournée fermée depuis le dépôt
-- **Plus proche voisin** : `O(N²)`
-- **2-opt** : remplacer `(a,b)`, `(c,d)` par `(a,c)`, `(b,d)` si
-  `d(a,b) + d(c,d) > d(a,c) + d(b,d)`
-- Répéter jusqu'au minimum local
+- **Plus proche voisin**, `O(N²)`
+- **2-opt** : remplacer `(a,b)`, `(c,d)` par `(a,c)`, `(b,d)` si c'est plus court, jusqu'au minimum local
 
 </div>
 <div class="ph">Schéma 2-opt : tournée croisée → décroisée</div>
 </div>
 
----
+<!-- Partie 5 : presentation/05_tsp.md -->
 
+---
 
 # Est-ce que c'est bon ?
 
-- Optimum exact par **Held-Karp** (`O(N² · 2^N)`) jusqu'à ~12 points
+- Optimum exact par **Held-Karp** (`O(N² · 2^N)`) jusqu'à 15 points
 - Instance publique **berlin52** (TSPLIB)
 
 | | Longueur | Écart à l'optimum | Temps |
@@ -235,7 +215,6 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 | NN + 2-opt | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
 
 ---
-
 
 # CVRP : Clarke & Wright (1964)
 
@@ -251,60 +230,50 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 <div class="ph">Schéma : deux allers-retours fusionnés en une tournée</div>
 </div>
 
----
-
-
-# Or-opt et vérifications
-
-- Déplacer 1 à 3 clients vers une meilleure position, même dans une autre tournée
-- Objectif : distance totale ; le nombre de véhicules est un résultat
-- Contrôles : client servi une fois, capacité, tournées dépôt → dépôt
-- Instance publique **A-n32-k5** (CVRPLIB) : écart <span class="todo">À MESURER</span>
+<!-- Partie 6 : presentation/06_cvrp.md -->
 
 ---
 
+# Or-opt, vérifications et résultats
 
-# Résultats : plus court chemin
+- Or-opt : déplacer 1 à 3 clients vers une meilleure position
+- Contrôles : client servi une fois, capacité respectée, tournées dépôt → dépôt
+- A-n32-k5 (CVRPLIB) : optimum 784 avec 5 véhicules, distances arrondies
 
-<div class="ph">Figure B1 : temps médian selon V, Dijkstra V1 / V2 / A* (échelle log)</div>
-
-5 répétitions, médiane, `-O2`, graine 42, même machine
-
----
-
-
-# Résultats : tournées
-
-<div class="cols">
-<div class="ph">Tableau B3 / B4 : écart à l'optimum</div>
-<div class="ph">Figure : temps selon N</div>
-</div>
-
-<div class="key">Compromis qualité / temps : <span class="todo">phrase à écrire avec les chiffres</span></div>
+| | Distance | Véhicules | Écart | Temps |
+|---|---|---|---|---|
+| Clarke & Wright | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
+| C&W + Or-opt | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
 
 ---
 
 <!-- _class: lead -->
 
-
 # Démo
 
-`path` · `tsp` · `cvrp` sur Lyon
+`path` · `tsp` · `cvrp` sur Lyon, dans Docker
 
-<!-- Script : presentation/08_demo.md. Plan B : vidéo. -->
+<!-- Partie 7 : presentation/07_demo.md. Plan B : vidéo. -->
 
 ---
 
+# Bilan : le compromis qualité / temps
 
-# Bilan
+<div class="cols">
+<div>
 
 - Chaîne complète : carte réelle → tournées multi-véhicules
 - La structure de données change l'ordre de grandeur
 - Une bonne heuristique garde l'optimalité (A\*)
 - Une amélioration locale gagne <span class="todo">À MESURER</span> % pour <span class="todo">À MESURER</span>
 
----
+</div>
+<div class="ph">Écart à l'optimum en fonction du temps : NN, NN + 2-opt, C&W, C&W + Or-opt</div>
+</div>
 
+<!-- Partie 8 : presentation/08_conclusion.md -->
+
+---
 
 # Limites et suites
 
@@ -338,3 +307,15 @@ github.com/LTOssian/logistics-route-optimizer
 | 2-opt, Or-opt | `O(N²)` par passe | `O(N)` |
 | Held-Karp | `O(N² 2^N)` | `O(N 2^N)` |
 | Clarke & Wright | `O(N² log N)` | `O(N²)` |
+
+---
+
+# Annexe : protocole de mesure
+
+- Même machine, image Docker du projet, compilation `-O2`
+- `CLOCK_MONOTONIC`, 5 répétitions, médiane
+- Graine 42 (générateur maison) pour les points, les paires et les demandes
+- Données OSM figées : date d'extraction et version d'OSMnx dans `meta.txt`
+- Environnement détaillé dans `benchmarks/ENV.md`
+
+<!-- Détail : presentation/annexe_benchmarks.md -->
