@@ -32,7 +32,7 @@ Questions du prof : voir [[questions_jury]]. Vocabulaire : [[glossaire]].
 Une entreprise livre N clients depuis un entrepôt à Lyon. On part de la carte réelle et on remonte étage par étage :
 
 ```
-OpenStreetMap -> graphe -> plus court chemin -> matrice N x N -> tournée (TSP) -> tournées multi-véhicules (CVRP)
+OpenStreetMap -> graphe -> plus court chemin -> matrice (N+1) x (N+1) -> tournée (TSP) -> tournées multi-véhicules (CVRP)
 ```
 
 Chaque étage utilise le précédent. C'est ce qui structure la présentation et le code.

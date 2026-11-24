@@ -110,7 +110,9 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Réouverture | rouvrir / ne pas rouvrir | ne pas rouvrir | Haversine consistante → le premier `g` est définitif |
 | Coordonnées | dans `Graph` / fichier séparé | dans `Graph` (optionnel) | A\* en a besoin ; optionnel pour charger un graphe sans coords |
 
-**Validation croisée :** sur graphe jouet **et** ville, `astar.distance == dijkstra.distance`.
+**Validation croisée :** sur graphe jouet **et** ville, la distance d'A\* égale celle de Dijkstra à une tolérance près (`|a − b| ≤ 1e-9 × max(1, |a|)`) : deux chemins de même longueur peuvent différer au dernier bit.
+
+**Comparaison équitable :** pour compter les nœuds *settled*, Dijkstra doit lui aussi s'arrêter quand la cible sort du tas (`dijkstra_query`), sinon il explore toute la ville et le gain d'A\* est surestimé.
 
 **Métrique clé :** nombre de nœuds *settled* A\* vs Dijkstra.
 
@@ -130,11 +132,12 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 |---|---|---|---|
 | Extraction | parseur `.pbf` en C / osmium / OSMnx | OSMnx (Python) | réseau + coordonnées, gère `drive`, simplifie les intersections ; évite protobuf/zlib en C |
 | Ville/région | très grande région / ville moyenne | Lyon, centrée place Bellecour | données OSM complètes, téléchargeables directement avec OSMnx |
-| Variation de taille | une seule taille / sous-graphes | disques de rayon 500, 1000, 2000 et 4000 m autour du centre (`graph_from_point`) | la consigne exige de faire varier la taille ; un seul paramètre à expliquer |
+| Variation de taille | une seule taille / sous-graphes | carrés de demi-côté R = 500, 1000, 2000 et 4000 m autour du centre (`graph_from_point`, dont la zone par défaut est un carré, pas un disque) | la consigne exige de faire varier la taille ; un seul paramètre à expliquer |
 | Où lancer le script | machine de chacun / Docker | Docker (`docker compose run --rm dev python scripts/osm_to_csv.py`) | même version d'OSMnx pour tous |
 | Format exporté | un fichier / 3 fichiers | `nodes.csv` + `edges.csv` + `meta.txt` | séparation ids / coordonnées / taille |
 | Mapping OSM→interne | en C (hash map) / en Python | en Python | le C reste simple (ids denses) |
 | Orientation | non orienté / orienté | non orienté (chaque rue exportée dans les deux sens) | matrice symétrique, donc 2-opt classique ; les sens uniques sont cités dans les limites |
+| Précision de l'export | arrondie / pleine | pleine précision (`repr`) pour les poids et les coordonnées | un poids arrondi vers le bas peut devenir plus court que le vol d'oiseau, et Haversine ne serait plus admissible |
 | Poids | distance / temps | distance | cohérent avec l'heuristique |
 | Versionnement des données | tout committer / tout ignorer | ignorer le brut, committer un échantillon + le script | éviter de gonfler le repo ; reproductible |
 | Reproductibilité | non documenté / documenter | date d'extraction + version OSMnx | les données OSM changent dans le temps |
@@ -156,11 +159,11 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
 | Algorithme | N Dijkstra / many-to-many avancé | N Dijkstra | simple, correct ; le many-to-many est un bonus hors périmètre |
-| Optimisation | Dijkstra complet / arrêt quand toutes les cibles atteintes | arrêt anticipé | gain significatif quand N ≪ V |
+| Optimisation | Dijkstra complet / arrêt quand toutes les cibles sont extraites du tas | arrêt anticipé | gain significatif quand N ≪ V |
 | Stockage | dense / creux | dense `double[N][N]` | N ~ 100–1000 → quelques Mo, très simple |
 | Ordre de calcul | depuis chaque point / depuis le dépôt | depuis chaque point | matrice complète pour le VRP |
 
-**Validation :** symétrie `d[i][j] == d[j][i]` (graphe non orienté) ; inégalité triangulaire ; cohérence avec des Dijkstra isolés.
+**Validation :** matrice `(N+1) × (N+1)` (dépôt compris) ; symétrie `d[i][j] ≈ d[j][i]` à tolérance près (graphe non orienté) ; inégalité triangulaire ; cohérence avec des Dijkstra isolés.
 
 **Complexité :** `O(N · (E log V))`.
 
@@ -182,7 +185,7 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Points | choisis à la main / tirés au hasard | dépôt = nœud le plus proche du centre ; clients tirés parmi les nœuds, graine 42 | reproductible |
 | Constructive | plus proche voisin / insertion | NN | demandé, `O(N²)`, simple |
 | Amélioration | 2-opt / Or-opt | 2-opt en phase 5 | demandé ; Or-opt en phase 6 |
-| Référence qualité | aucune / Held-Karp | Held-Karp ≤ ~12 points, plus l'instance TSPLIB `berlin52` (optimum publié) | mesure de l'écart à l'optimum, y compris sur une instance plus grande |
+| Référence qualité | aucune / Held-Karp | Held-Karp jusqu'à 15 points (mémoire `N · 2^N`, environ 4 Mo à 15 points, 168 Mo à 20), plus l'instance TSPLIB `berlin52` (optimum publié) | mesure de l'écart à l'optimum, y compris sur une instance plus grande |
 | Déterminisme | départ aléatoire / fixe | départ fixe | reproductibilité |
 
 **Validation :** chaque point visité exactement une fois ; longueur recalculée = longueur annoncée.
@@ -301,7 +304,7 @@ Le TSP et le CVRP ne dépendent que d'une matrice de distances : ils peuvent êt
 
 1. TSP : tournée fermée.
 2. CVRP : minimiser la distance totale, flotte libre.
-3. Ville : Lyon, disques de 500 à 4000 m autour de Bellecour.
+3. Ville : Lyon, carrés de demi-côté 500 à 4000 m autour de Bellecour.
 4. Graphe non orienté, pour une matrice symétrique.
 5. Rapport en français, en Markdown (export PDF si demandé).
 6. Bonus (Contraction Hierarchies ou métaheuristique) : seulement si tout le minimum est fini avant le gel du code.
