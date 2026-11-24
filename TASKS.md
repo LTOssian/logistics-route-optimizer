@@ -10,7 +10,7 @@ Pour prendre une tâche : s'assigner sur l'issue GitHub correspondante.
 - [ ] Se répartir les issues (chacun s'assigne)
 - [ ] Tout le monde : `docker compose build` puis `docker compose run --rm dev make test` sur la branche de la phase 1
 - [ ] Phase 1 : renommage `dijkstra`, tas binaire, Dijkstra V2, oracle, CLI `path` (#1)
-- [ ] Phase 3 : `scripts/osm_to_csv.py`, graphes Lyon 500 à 4000 m (#4)
+- [ ] Phase 3 : `scripts/osm_to_csv.py`, graphes Lyon R = 500 à 4000 m, les 4 jeux committés (#4)
 - [ ] Phase 5 : NN + 2-opt + Held-Karp sur matrices jouets (#6)
 
 ## Jeu. 26 – ven. 27 nov.
@@ -36,6 +36,7 @@ Pour prendre une tâche : s'assigner sur l'issue GitHub correspondante.
 - [ ] `demo.sh` + vidéo de secours + test sur une machine propre (#11)
 - [ ] Rapport : chacun sa section (#9)
 - [ ] Export PDF des diapos (#13)
+- [ ] Merger `documentation` dans `main` : c'est la version rendue au prof
 
 ## Jeu. 3 déc.
 
@@ -48,7 +49,11 @@ Pour prendre une tâche : s'assigner sur l'issue GitHub correspondante.
 
 - [ ] Poste de démo : image Docker construite, `data/osm/lyon_2000` présent, `make` fait
 - [ ] PDF des diapos + vidéo de secours sur clé USB
-- [ ] Repo propre : brouillons et `PROMPT/` retirés de la version rendue si non demandés
+- [ ] Repo propre : brouillons supprimés, section « Usage de l'IA » du README à jour
+
+## En cas de retard
+
+Appliquer la liste de coupes de `PLAN.md` (phase 9), dans l'ordre.
 
 ## Hors calendrier (seulement si tout le reste est fini)
 
