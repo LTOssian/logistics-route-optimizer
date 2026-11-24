@@ -1,6 +1,6 @@
 # 5. Matrice de distances et TSP
 
-Orateur : Faustine — 2 min
+Orateur : à définir — 2 min
 
 ## Message clé
 

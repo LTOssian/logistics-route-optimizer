@@ -276,13 +276,7 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Répartition | une personne / chacun sa partie | chacun présente ce qu'il a codé | chacun peut défendre son code |
 | Chiffres | estimés / mesurés | uniquement ceux de `benchmarks/results/` | pas de résultat inventé |
 
-**Répartition :**
-
-| Personne | Phases | Parties présentées |
-|---|---|---|
-| Louisan (`LTOssian`) | 1, 2, 4, CLI | Dijkstra, A\*, démo live |
-| Sofia (`Lisoma23`) | 3, 7 | problème, données OSM, résultats |
-| Faustine (`Nyoote`) | 5, 6, note Clarke & Wright | TSP, CVRP, conclusion |
+**Répartition :** pas encore faite. Chacun s'assigne les issues qu'il prend sur GitHub, et présente ensuite les parties qu'il a codées.
 
 Le rapport (phase 8) est écrit par tous : chacun rédige la section de ses phases.
 
