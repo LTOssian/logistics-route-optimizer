@@ -2,6 +2,8 @@
 
 > [!summary] Statut
 > Plan **validé** par l'équipe. Ce document est la source canonique : il décrit les décisions, les phases et les critères de validation. Toute modification de l'architecture doit être discutée en groupe puis reportée ici.
+>
+> Soutenance : **vendredi 4 décembre 2026**, 15 minutes, démo live. Calendrier et répartition en phase 9. Suivi au jour le jour dans `TASKS.md`.
 
 ## Contexte
 
@@ -37,12 +39,15 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Mesure du temps | `clock()` / `gettimeofday()` / `CLOCK_MONOTONIC` | `CLOCK_MONOTONIC` | mesure de durées fiable, insensible à l'horloge système |
 | Noms de code | français / anglais | identifiants anglais, commentaires/rapport français | convention de l'écosystème C |
 | Aléatoire | non spécifié / graine fixe | graine fixe documentée | reproductibilité académique |
-| Branche de travail | `documentation` / `feat/*` / `main` | `main` | base commune unique, moins de conflits |
+| Branches | tout sur `main` / une branche par issue | une branche par issue, PR vers `main` ; `documentation` pour la doc Obsidian ; `presentation` pour les diapos | à trois en asynchrone, la CI vérifie chaque PR avant le merge |
+| Environnement | installations locales / Docker | image Docker commune (`compose.yaml`) | mêmes versions de gcc, valgrind et OSMnx pour tout le monde, et pour la démo |
 | Usage de l'IA | libre / sobre | sobre ; doc nettoyée avant rendu | le professeur n'attend pas un projet « fait par IA » |
 
 ---
 
 ## Phase 0 — Consolider les notes
+
+**Statut :** terminée.
 
 **Objectif :** partir d'une base propre avant de coder.
 
@@ -71,7 +76,9 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
 | Format de données | CSV `u,v,weight` / binaire / ad hoc | CSV avec en-tête `n,m` | lisible, généré par Python, diff-able |
-| Tas | scan linéaire `O(V²)` / tas binaire | tas binaire | attendu pédagogiquement ; réutilisé par A\* et le VRP |
+| Tas | scan linéaire `O(V²)` / tas binaire | les deux : V1 en scan linéaire (faite), V2 avec tas binaire | la V1 est simple à vérifier ; la V2 est nécessaire sur OSM et réutilisée par A\* ; comparer les deux donne une courbe pour la soutenance |
+| Nommage | `djikstra` / `dijkstra` | `dijkstra` (renommer fichiers et tests) | orthographe correcte, visible pendant la démo |
+| CLI | aucune / `lro` | binaire `build/lro` avec sous-commandes `path`, `tsp`, `cvrp` | sert à la démo live |
 | Suppression | `decrease-key` / lazy deletion | lazy deletion | plus simple ; entrées périmées ignorées au pop |
 | Nœuds inatteignables | `-1` / `INFINITY` | `INFINITY` | sémantique claire, testable |
 | Départage d'égalités | strict / tolérant | tolérant dans les tests | plusieurs chemins optimaux valides |
@@ -122,11 +129,12 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
 | Extraction | parseur `.pbf` en C / osmium / OSMnx | OSMnx (Python) | réseau + coordonnées, gère `drive`, simplifie les intersections ; évite protobuf/zlib en C |
-| Ville/région | très grande région / ville moyenne | ville moyenne | volume et temps raisonnables |
-| Variation de taille | une seule taille / sous-graphes | sous-graphes (ex. 1k, 5k, 10k, 50k nœuds) | la consigne exige de faire varier la taille |
+| Ville/région | très grande région / ville moyenne | Lyon, centrée place Bellecour | données OSM complètes, téléchargeables directement avec OSMnx |
+| Variation de taille | une seule taille / sous-graphes | disques de rayon 500, 1000, 2000 et 4000 m autour du centre (`graph_from_point`) | la consigne exige de faire varier la taille ; un seul paramètre à expliquer |
+| Où lancer le script | machine de chacun / Docker | Docker (`docker compose run --rm dev python scripts/osm_to_csv.py`) | même version d'OSMnx pour tous |
 | Format exporté | un fichier / 3 fichiers | `nodes.csv` + `edges.csv` + `meta.txt` | séparation ids / coordonnées / taille |
 | Mapping OSM→interne | en C (hash map) / en Python | en Python | le C reste simple (ids denses) |
-| Orientation | non orienté / orienté | orienté | sens uniques ; exporter les deux sens si non orienté |
+| Orientation | non orienté / orienté | non orienté (chaque rue exportée dans les deux sens) | matrice symétrique, donc 2-opt classique ; les sens uniques sont cités dans les limites |
 | Poids | distance / temps | distance | cohérent avec l'heuristique |
 | Versionnement des données | tout committer / tout ignorer | ignorer le brut, committer un échantillon + le script | éviter de gonfler le repo ; reproductible |
 | Reproductibilité | non documenté / documenter | date d'extraction + version OSMnx | les données OSM changent dans le temps |
@@ -170,10 +178,11 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
-| Variante | tournée fermée (retour dépôt) / chemin ouvert | à trancher en groupe | impacte les métriques |
+| Variante | tournée fermée (retour dépôt) / chemin ouvert | tournée fermée | un livreur revient à l'entrepôt ; cohérent avec le CVRP |
+| Points | choisis à la main / tirés au hasard | dépôt = nœud le plus proche du centre ; clients tirés parmi les nœuds, graine 42 | reproductible |
 | Constructive | plus proche voisin / insertion | NN | demandé, `O(N²)`, simple |
 | Amélioration | 2-opt / Or-opt | 2-opt en phase 5 | demandé ; Or-opt en phase 6 |
-| Référence qualité | aucune / Held-Karp | Held-Karp ≤ ~15 points | mesure de l'écart à l'optimum |
+| Référence qualité | aucune / Held-Karp | Held-Karp ≤ ~12 points, plus l'instance TSPLIB `berlin52` (optimum publié) | mesure de l'écart à l'optimum, y compris sur une instance plus grande |
 | Déterminisme | départ aléatoire / fixe | départ fixe | reproductibilité |
 
 **Validation :** chaque point visité exactement une fois ; longueur recalculée = longueur annoncée.
@@ -195,10 +204,11 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
 | Variante | VRP ouvert / CVRP | CVRP | correspond à « véhicules de capacité limitée » |
-| Demandes | réelles / synthétiques seedées | synthétiques, graine fixe | les points OSM n'ont pas de demande ; reproductibilité |
+| Demandes | réelles / synthétiques seedées | entiers de 1 à 10, graine 42 ; capacité Q = 60 par défaut | les points OSM n'ont pas de demande ; reproductibilité |
 | Constructive | Clarke & Wright / NN multi-dépôt | Clarke & Wright | demandé ; bonne qualité, `O(N² log N)` |
 | Amélioration | Or-opt / 2-opt inter-routes | Or-opt | demandé |
-| Objectif | distance seule / flotte puis distance | à trancher en groupe | change la stratégie |
+| Objectif | distance seule / flotte puis distance | distance totale ; le nombre de véhicules est un résultat | plus simple, et c'est ce que Clarke & Wright optimise naturellement |
+| Référence qualité | aucune / instance publique | instance CVRPLIB `A-n32-k5` (optimum publié) | seule façon simple de mesurer un écart à l'optimum en CVRP |
 | Contraintes | capacité seule / + fenêtres de temps | capacité seule (MVP) | périmètre minimum |
 
 **Validation :** capacité respectée ; chaque client servi exactement une fois ; routes partent/reviennent au dépôt.
@@ -240,7 +250,7 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
-| Langue | français / anglais | français (à confirmer) | cohérent avec notes/consigne |
+| Langue | français / anglais | français | cohérent avec notes/consigne |
 | Format | Markdown / LaTeX-PDF | Markdown puis export PDF | déjà en Obsidian ; PDF si exigé |
 | Structure | libre / IMRaD | IMRaD | standard académique |
 | Lien avec les articles | citation vague / section dédiée | section dédiée | exigé par la consigne |
@@ -251,11 +261,53 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 
 ---
 
-## Points à trancher en groupe
+## Phase 9 — Soutenance
 
-1. **TSP** : tournée fermée (retour dépôt) ou chemin ouvert ?
-2. **CVRP** : objectif = distance minimale, ou flotte minimale puis distance ?
-3. **Ville** : laquelle ? (tailles des sous-graphes associés)
-4. **Langue du rapport** : français confirmé ?
-5. **Format final** : Markdown suffisant ou PDF exigé ?
-6. **Périmètre bonus** : Contraction Hierarchies ou métaheuristique — après le minimum viable.
+**Objectif :** présenter le projet en 15 minutes, démo live comprise, le vendredi 4 décembre 2026.
+
+**Livrables :** `presentation/` (texte de chaque partie, sur la branche `documentation`), diapos Marp (branche `presentation`), script de démo et vidéo de secours.
+
+**Décisions :**
+
+| Point | Options | Choix | Pourquoi |
+|---|---|---|---|
+| Outil des diapos | PowerPoint / Google Slides / Marp | Marp (Markdown) | versionné dans git, éditable par les trois, export PDF/HTML |
+| Démo | captures / live | live dans le conteneur Docker, avec une vidéo en secours | montre que l'outil fonctionne ; la vidéo protège d'un plantage |
+| Répartition | une personne / chacun sa partie | chacun présente ce qu'il a codé | chacun peut défendre son code |
+| Chiffres | estimés / mesurés | uniquement ceux de `benchmarks/results/` | pas de résultat inventé |
+
+**Répartition :**
+
+| Personne | Phases | Parties présentées |
+|---|---|---|
+| Louisan (`LTOssian`) | 1, 2, 4, CLI | Dijkstra, A\*, démo live |
+| Sofia (`Lisoma23`) | 3, 7 | problème, données OSM, résultats |
+| Faustine (`Nyoote`) | 5, 6, note Clarke & Wright | TSP, CVRP, conclusion |
+
+Le rapport (phase 8) est écrit par tous : chacun rédige la section de ses phases.
+
+**Calendrier :**
+
+| Dates | Objectif |
+|---|---|
+| mar. 24 – mer. 25 nov. | Docker mergé ; phase 1 terminée (tas, CLI, renommage) ; pipeline OSM ; TSP sur des matrices jouets |
+| jeu. 26 – ven. 27 nov. | A\* ; matrice ; CVRP sur des matrices jouets ; script de benchmarks |
+| sam. 28 – lun. 30 nov. | tout branché sur Lyon ; benchmarks et figures ; **gel du code lundi soir** |
+| mar. 1 – mer. 2 déc. | diapos avec les vrais chiffres ; rapport ; vidéo de secours |
+| jeu. 3 déc. | deux répétitions chronométrées |
+| ven. 4 déc. | soutenance |
+
+Le TSP et le CVRP ne dépendent que d'une matrice de distances : ils peuvent être codés et testés sur des matrices jouets (ou TSPLIB / CVRPLIB) avant que la phase 4 soit prête.
+
+**Validation :** répétition complète en moins de 15 minutes ; démo jouée de bout en bout sur une machine propre (`docker compose build` puis `demo.sh`).
+
+---
+
+## Décisions tranchées le 24 novembre
+
+1. TSP : tournée fermée.
+2. CVRP : minimiser la distance totale, flotte libre.
+3. Ville : Lyon, disques de 500 à 4000 m autour de Bellecour.
+4. Graphe non orienté, pour une matrice symétrique.
+5. Rapport en français, en Markdown (export PDF si demandé).
+6. Bonus (Contraction Hierarchies ou métaheuristique) : seulement si tout le minimum est fini avant le gel du code.
