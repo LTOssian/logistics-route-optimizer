@@ -8,14 +8,14 @@ Dijkstra donne le plus court chemin exact quand les poids sont positifs. La stru
 
 ## Diapos
 
-**Diapo 6 — Principe**
+**Diapo 5 — Principe**
 
 - `dist[source] = 0`, tous les autres à `INFINITY`.
 - On extrait le nœud non traité de plus petite distance, on le fige, on relâche ses arêtes.
 - Invariant : un nœud extrait a sa distance définitive (car les poids sont ≥ 0).
 - Reconstruction du chemin avec `prev[]` en remontant depuis la cible.
 
-**Diapo 7 — Deux versions**
+**Diapo 6 — Deux versions, et comment on sait que c'est juste**
 
 | Version | Choix du minimum | Complexité |
 |---|---|---|
@@ -25,14 +25,9 @@ Dijkstra donne le plus court chemin exact quand les poids sont positifs. La stru
 - Graphe routier creux : E ≈ 2 à 3 × V, donc V2 gagne largement quand V grandit.
 - Lazy deletion : on ne met pas à jour une clé dans le tas, on réinsère et on ignore les entrées périmées au pop.
 - Courbe V1 vs V2 en fonction de V : `À MESURER` (benchmark B1).
+- Correction : graphe jouet du CLRS aux distances connues, oracle exhaustif sur ≤ 8 nœuds, cas limites (inatteignable, source invalide, source = cible). Ne garder sur la diapo que ce qui est réellement testé le jour J.
 
-**Diapo 8 — Comment on sait que c'est juste**
-
-- Graphe jouet de 5 nœuds (exemple du CLRS) avec distances connues (`data/toy/toy1.expected`).
-- Oracle exhaustif : sur des graphes de 8 nœuds au plus, on énumère tous les chemins simples et on compare.
-- Cas limites testés : nœud inatteignable (`INFINITY`), source invalide, chemin source → source.
-
-Extrait de code possible (boucle principale de la V1, 10 lignes, `src/dijkstra.c`) : sélection du minimum puis relâchement.
+Sur la diapo 5, l'extrait de code (relâchement, 6 lignes) est simplifié : le dire à l'oral, les vrais noms sont `graph->adjacency` et `result->distances`.
 
 ## Texte oral
 
@@ -41,6 +36,8 @@ Extrait de code possible (boucle principale de la V1, 10 lignes, `src/dijkstra.c
 > On l'a codé en deux temps. D'abord une version simple où on cherche le minimum en parcourant tout le tableau : c'est du V², facile à vérifier. Ensuite une version avec un tas binaire. Sur un graphe routier, chaque intersection a deux ou trois rues, donc E reste proche de V, et on passe à du (V + E) log V. Sur notre plus grand graphe, la différence est de `À MESURER`.
 >
 > Pour la correction, on compare à un oracle qui énumère tous les chemins sur des petits graphes.
+>
+> Pour toutes les mesures de la présentation : même machine, médiane de 5 répétitions, graine fixe. Le protocole complet est en annexe.
 
 ## À préparer
 

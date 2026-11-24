@@ -84,13 +84,13 @@ Les termes utilisés dans la présentation et les diapos, dans l'ordre où ils a
 
 ## Matrice et tournées
 
-**Matrice de distances** : le tableau de la distance par la route entre chaque paire de points de livraison, dépôt compris.
+**Matrice de distances** : le tableau de la distance par la route entre chaque paire de points de livraison, dépôt compris. Avec N clients, elle fait (N+1) × (N+1).
 
 **Matrice dense** : on stocke toutes les cases, même s'il y en a beaucoup. C'est possible ici parce qu'on n'a que quelques centaines de points.
 
 **Matrice symétrique** : `d[i][j] = d[j][i]`. C'est le cas parce que notre graphe est non orienté.
 
-**Arrêt anticipé** : on arrête Dijkstra dès que tous les points qui nous intéressent sont traités, sans finir toute la ville.
+**Arrêt anticipé** : on arrête Dijkstra dès que tous les points qui nous intéressent sont extraits du tas (leur distance est alors définitive), sans finir toute la ville.
 
 **Dépôt** : l'entrepôt d'où partent les véhicules et où ils reviennent.
 
@@ -110,7 +110,7 @@ Les termes utilisés dans la présentation et les diapos, dans l'ordre où ils a
 
 **Minimum local** : une solution qu'aucune petite retouche ne peut améliorer, mais qui n'est pas forcément la meilleure possible.
 
-**Held-Karp** : un algorithme exact pour le TSP, qui stocke les meilleurs sous-chemins pour ne pas les recalculer. Il est exponentiel (`O(N² · 2^N)`), donc limité à une quinzaine de points.
+**Held-Karp** : un algorithme exact pour le TSP, qui stocke les meilleurs sous-chemins pour ne pas les recalculer. Il est exponentiel (`O(N² · 2^N)`), donc limité à 15 points chez nous.
 
 **Programmation dynamique** : résoudre un problème en combinant les solutions de sous-problèmes plus petits, calculées une seule fois et stockées.
 

@@ -38,10 +38,11 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Gestion d'erreurs | `exit()` partout / codes de retour | propager (`NULL`/statut), `exit()` seulement dans `main` | le C doit pouvoir devenir une lib appelée par un serveur |
 | Mesure du temps | `clock()` / `gettimeofday()` / `CLOCK_MONOTONIC` | `CLOCK_MONOTONIC` | mesure de durées fiable, insensible à l'horloge système |
 | Noms de code | français / anglais | identifiants anglais, commentaires/rapport français | convention de l'écosystème C |
-| Aléatoire | non spécifié / graine fixe | graine fixe documentée | reproductibilité académique |
+| Aléatoire | `rand()` / générateur maison | générateur maison (`src/rng.{h,c}`, xorshift), graine fixe documentée | `rand()` donne des suites différentes selon la libc (macOS, Linux) : avec notre générateur, la graine 42 tire les mêmes points partout |
 | Branches | tout sur `main` / une branche par issue | une branche par issue, PR vers `main` ; `documentation` pour la doc Obsidian ; `presentation` pour les diapos | à trois en asynchrone, la CI vérifie chaque PR avant le merge |
 | Environnement | installations locales / Docker | image Docker commune (`compose.yaml`) | mêmes versions de gcc, valgrind et OSMnx pour tout le monde, et pour la démo |
-| Usage de l'IA | libre / sobre | sobre ; doc nettoyée avant rendu | le professeur n'attend pas un projet « fait par IA » |
+| Usage de l'IA | libre / sobre | sobre, et déclaré : section « Usage de l'IA » du README ; `PROMPT/` conservé | le professeur n'attend pas un projet « fait par IA » ; le dépôt est public et l'historique garde tout, donc on assume plutôt que de cacher |
+| Branche rendue | `main` / `documentation` | `main`, dans laquelle on merge `documentation` avant le rendu | code, plan et rapport au même endroit, avec un seul `PLAN.md` à jour |
 
 ---
 
@@ -110,7 +111,9 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Réouverture | rouvrir / ne pas rouvrir | ne pas rouvrir | Haversine consistante → le premier `g` est définitif |
 | Coordonnées | dans `Graph` / fichier séparé | dans `Graph` (optionnel) | A\* en a besoin ; optionnel pour charger un graphe sans coords |
 
-**Validation croisée :** sur graphe jouet **et** ville, `astar.distance == dijkstra.distance`.
+**Validation croisée :** sur graphe jouet **et** ville, la distance d'A\* égale celle de Dijkstra à une tolérance près (`|a − b| ≤ 1e-9 × max(1, |a|)`) : deux chemins de même longueur peuvent différer au dernier bit.
+
+**Comparaison équitable :** pour compter les nœuds *settled*, Dijkstra doit lui aussi s'arrêter quand la cible sort du tas (`dijkstra_query`), sinon il explore toute la ville et le gain d'A\* est surestimé.
 
 **Métrique clé :** nombre de nœuds *settled* A\* vs Dijkstra.
 
@@ -130,13 +133,14 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 |---|---|---|---|
 | Extraction | parseur `.pbf` en C / osmium / OSMnx | OSMnx (Python) | réseau + coordonnées, gère `drive`, simplifie les intersections ; évite protobuf/zlib en C |
 | Ville/région | très grande région / ville moyenne | Lyon, centrée place Bellecour | données OSM complètes, téléchargeables directement avec OSMnx |
-| Variation de taille | une seule taille / sous-graphes | disques de rayon 500, 1000, 2000 et 4000 m autour du centre (`graph_from_point`) | la consigne exige de faire varier la taille ; un seul paramètre à expliquer |
+| Variation de taille | une seule taille / sous-graphes | carrés de demi-côté R = 500, 1000, 2000 et 4000 m autour du centre (`graph_from_point`, dont la zone par défaut est un carré, pas un disque) | la consigne exige de faire varier la taille ; un seul paramètre à expliquer |
 | Où lancer le script | machine de chacun / Docker | Docker (`docker compose run --rm dev python scripts/osm_to_csv.py`) | même version d'OSMnx pour tous |
 | Format exporté | un fichier / 3 fichiers | `nodes.csv` + `edges.csv` + `meta.txt` | séparation ids / coordonnées / taille |
 | Mapping OSM→interne | en C (hash map) / en Python | en Python | le C reste simple (ids denses) |
 | Orientation | non orienté / orienté | non orienté (chaque rue exportée dans les deux sens) | matrice symétrique, donc 2-opt classique ; les sens uniques sont cités dans les limites |
+| Précision de l'export | arrondie / pleine | pleine précision (`repr`) pour les poids et les coordonnées | un poids arrondi vers le bas peut devenir plus court que le vol d'oiseau, et Haversine ne serait plus admissible |
 | Poids | distance / temps | distance | cohérent avec l'heuristique |
-| Versionnement des données | tout committer / tout ignorer | ignorer le brut, committer un échantillon + le script | éviter de gonfler le repo ; reproductible |
+| Versionnement des données | tout committer / tout ignorer | committer les 4 jeux exportés (`data/osm/lyon_<R>/`) avec leur `meta.txt` ; ignorer le brut et le cache ; ne plus régénérer après le gel du code | une nouvelle extraction change la numérotation des nœuds : la démo et les chiffres des diapos ne correspondraient plus |
 | Reproductibilité | non documenté / documenter | date d'extraction + version OSMnx | les données OSM changent dans le temps |
 
 **Validation :** nombre de nœuds/arêtes identique entre Python et C ; distances plausibles ; garder la plus grande composante connexe.
@@ -156,11 +160,11 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
 | Algorithme | N Dijkstra / many-to-many avancé | N Dijkstra | simple, correct ; le many-to-many est un bonus hors périmètre |
-| Optimisation | Dijkstra complet / arrêt quand toutes les cibles atteintes | arrêt anticipé | gain significatif quand N ≪ V |
+| Optimisation | Dijkstra complet / arrêt quand toutes les cibles sont extraites du tas | arrêt anticipé | gain significatif quand N ≪ V |
 | Stockage | dense / creux | dense `double[N][N]` | N ~ 100–1000 → quelques Mo, très simple |
 | Ordre de calcul | depuis chaque point / depuis le dépôt | depuis chaque point | matrice complète pour le VRP |
 
-**Validation :** symétrie `d[i][j] == d[j][i]` (graphe non orienté) ; inégalité triangulaire ; cohérence avec des Dijkstra isolés.
+**Validation :** matrice `(N+1) × (N+1)` (dépôt compris) ; symétrie `d[i][j] ≈ d[j][i]` à tolérance près (graphe non orienté) ; inégalité triangulaire ; cohérence avec des Dijkstra isolés.
 
 **Complexité :** `O(N · (E log V))`.
 
@@ -182,7 +186,7 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Points | choisis à la main / tirés au hasard | dépôt = nœud le plus proche du centre ; clients tirés parmi les nœuds, graine 42 | reproductible |
 | Constructive | plus proche voisin / insertion | NN | demandé, `O(N²)`, simple |
 | Amélioration | 2-opt / Or-opt | 2-opt en phase 5 | demandé ; Or-opt en phase 6 |
-| Référence qualité | aucune / Held-Karp | Held-Karp ≤ ~12 points, plus l'instance TSPLIB `berlin52` (optimum publié) | mesure de l'écart à l'optimum, y compris sur une instance plus grande |
+| Référence qualité | aucune / Held-Karp | Held-Karp jusqu'à 15 points (mémoire `N · 2^N`, environ 4 Mo à 15 points, 168 Mo à 20), plus l'instance TSPLIB `berlin52` (optimum publié) | mesure de l'écart à l'optimum, y compris sur une instance plus grande |
 | Déterminisme | départ aléatoire / fixe | départ fixe | reproductibilité |
 
 **Validation :** chaque point visité exactement une fois ; longueur recalculée = longueur annoncée.
@@ -272,7 +276,7 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Point | Options | Choix | Pourquoi |
 |---|---|---|---|
 | Outil des diapos | PowerPoint / Google Slides / Marp | Marp (Markdown) | versionné dans git, éditable par les trois, export PDF/HTML |
-| Démo | captures / live | live dans le conteneur Docker, avec une vidéo en secours | montre que l'outil fonctionne ; la vidéo protège d'un plantage |
+| Démo | captures / live | live, chaque commande lancée via `docker compose run` depuis `demo.sh`, avec une vidéo en secours | montre que l'outil fonctionne ; la vidéo protège d'un plantage |
 | Répartition | une personne / chacun sa partie | chacun présente ce qu'il a codé | chacun peut défendre son code |
 | Chiffres | estimés / mesurés | uniquement ceux de `benchmarks/results/` | pas de résultat inventé |
 
@@ -287,13 +291,23 @@ Le rapport (phase 8) est écrit par tous : chacun rédige la section de ses phas
 | mar. 24 – mer. 25 nov. | Docker mergé ; phase 1 terminée (tas, CLI, renommage) ; pipeline OSM ; TSP sur des matrices jouets |
 | jeu. 26 – ven. 27 nov. | A\* ; matrice ; CVRP sur des matrices jouets ; script de benchmarks |
 | sam. 28 – lun. 30 nov. | tout branché sur Lyon ; benchmarks et figures ; **gel du code lundi soir** |
-| mar. 1 – mer. 2 déc. | diapos avec les vrais chiffres ; rapport ; vidéo de secours |
+| mar. 1 – mer. 2 déc. | diapos avec les vrais chiffres ; rapport ; vidéo de secours ; merge de `documentation` dans `main` (version rendue) |
 | jeu. 3 déc. | deux répétitions chronométrées |
 | ven. 4 déc. | soutenance |
 
 Le TSP et le CVRP ne dépendent que d'une matrice de distances : ils peuvent être codés et testés sur des matrices jouets (ou TSPLIB / CVRPLIB) avant que la phase 4 soit prête.
 
-**Validation :** répétition complète en moins de 15 minutes ; démo jouée de bout en bout sur une machine propre (`docker compose build` puis `demo.sh`).
+**Coupes si on prend du retard**, dans cet ordre (on coupe le premier point avant de toucher au suivant) :
+
+1. Figure des nœuds explorés Dijkstra / A\* (#12) : remplacée par le chiffre seul.
+2. Graphe de 4000 m : on garde trois tailles.
+3. Benchmark B2 réduit à N = 10, 50, 200.
+4. Or-opt seulement à l'intérieur d'une tournée.
+5. Instances berlin52 et A-n32-k5 : on garde Held-Karp comme seule référence pour le TSP.
+
+On ne coupe jamais : Dijkstra avec tas, A\*, NN + 2-opt, Clarke & Wright, les tests, la démo et sa vidéo de secours.
+
+**Validation :** répétition complète en 13 min 30 au plus (15 min max, la marge sert aux transitions et aux imprévus) ; démo jouée de bout en bout sur une machine propre (`docker compose build` puis `demo.sh`).
 
 ---
 
@@ -301,7 +315,7 @@ Le TSP et le CVRP ne dépendent que d'une matrice de distances : ils peuvent êt
 
 1. TSP : tournée fermée.
 2. CVRP : minimiser la distance totale, flotte libre.
-3. Ville : Lyon, disques de 500 à 4000 m autour de Bellecour.
+3. Ville : Lyon, carrés de demi-côté 500 à 4000 m autour de Bellecour.
 4. Graphe non orienté, pour une matrice symétrique.
 5. Rapport en français, en Markdown (export PDF si demandé).
 6. Bonus (Contraction Hierarchies ou métaheuristique) : seulement si tout le minimum est fini avant le gel du code.

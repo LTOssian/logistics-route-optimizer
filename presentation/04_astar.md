@@ -8,19 +8,20 @@ A\* explore beaucoup moins de nœuds que Dijkstra et trouve exactement la même 
 
 ## Diapos
 
-**Diapo 9 — f = g + h**
+**Diapo 7 — f = g + h**
 
 - `g(n)` : distance réelle depuis la source.
 - `h(n)` : estimation du reste, ici la distance Haversine (vol d'oiseau sur la sphère) jusqu'à la cible.
 - On extrait le nœud de plus petit `f = g + h` au lieu du plus petit `g`.
 - Article : Hart, Nilsson et Raphael (1968), qui prouvent l'optimalité si `h` est admissible.
 
-**Diapo 10 — Pourquoi c'est encore optimal**
+**Diapo 8 — Pourquoi c'est encore optimal**
 
 - Admissible : une route est toujours au moins aussi longue que le vol d'oiseau, donc `h(n) ≤ distance réelle restante`.
 - Consistante : `h(u) ≤ w(u, v) + h(v)` (inégalité triangulaire), donc pas besoin de rouvrir un nœud fermé.
 - On s'arrête quand la cible sort du tas, pas quand elle y entre.
-- Vérification : sur toutes nos requêtes de test, `astar.distance == dijkstra.distance`.
+- Vérification : sur toutes nos requêtes de test, A\* et Dijkstra trouvent la même distance (à 1e-9 près).
+- Comparaison équitable : Dijkstra s'arrête lui aussi quand la cible sort du tas.
 - Nœuds explorés A\* vs Dijkstra : `À MESURER` (benchmark B1).
 
 ## Texte oral

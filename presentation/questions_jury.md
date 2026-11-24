@@ -22,7 +22,7 @@ Non. Au pire cas, il explore autant que Dijkstra, par exemple si `h = 0` ou si l
 ## Tournées
 
 **Pourquoi des heuristiques ?**
-TSP et CVRP sont NP-difficiles : pas d'algorithme polynomial connu. Held-Karp est exact mais exponentiel, donc limité à une quinzaine de points.
+TSP et CVRP sont NP-difficiles : pas d'algorithme polynomial connu. Held-Karp est exact mais exponentiel, donc limité à 15 points chez nous : sa mémoire grandit en `N · 2^N`.
 
 **2-opt donne-t-il l'optimum ?**
 Non. Il s'arrête sur un minimum local : plus aucun échange de deux arêtes n'améliore, mais un changement plus grand le pourrait. On mesure l'écart sur les petites instances et sur berlin52.
@@ -36,7 +36,7 @@ Servir `i` puis `j` dans la même tournée évite le retour `i → 0` et l'aller
 ## Méthode
 
 **Comment vous savez que votre code est juste ?**
-Tests unitaires par module, oracle exhaustif pour Dijkstra, égalité A\* = Dijkstra, Held-Karp pour le TSP, contrôles de faisabilité pour le CVRP. `make test` passe, et valgrind ne signale pas de fuite.
+Tests unitaires par module, oracle exhaustif pour Dijkstra, même distance pour A\* et Dijkstra (à 1e-9 près), Held-Karp pour le TSP, contrôles de faisabilité pour le CVRP. `make test` passe, et valgrind ne signale pas de fuite.
 
 **Pourquoi C ?**
 C'est imposé par le sujet. Ça nous oblige à gérer la mémoire et les structures nous-mêmes, et les temps mesurés ne sont pas brouillés par un runtime.

@@ -8,29 +8,26 @@ On construit une tournée rapide avec le plus proche voisin, puis 2-opt la racco
 
 ## Diapos
 
-**Diapo 11 — Matrice de distances**
+**Diapo 9 — De la matrice à la tournée**
 
 - Points : le dépôt et N clients tirés au hasard parmi les nœuds du graphe (graine fixe).
-- Un Dijkstra par point, qu'on arrête dès que tous les autres points sont atteints.
-- Matrice dense `N × N`, symétrique car le graphe est non orienté.
+- Un Dijkstra par point, qu'on arrête dès que tous les autres points sont extraits du tas (leur distance est alors définitive).
+- Matrice dense `(N+1) × (N+1)` (dépôt compris), symétrique car le graphe est non orienté.
 - Complexité : `O(N · (V + E) log V)`.
-
-**Diapo 12 — Plus proche voisin puis 2-opt**
-
 - Tournée fermée : départ et retour au dépôt.
 - Plus proche voisin : aller toujours au client non visité le plus proche. `O(N²)`.
 - 2-opt : on retire deux arêtes `(a, b)` et `(c, d)`, on reconnecte en `(a, c)` et `(b, d)` en inversant le segment entre les deux. On garde le changement si `d(a,b) + d(c,d) > d(a,c) + d(b,d)`. On recommence jusqu'à ce qu'aucun échange n'améliore. `O(N²)` par passe.
 - Schéma : une tournée qui se croise, puis décroisée.
 
-**Diapo 13 — Est-ce que c'est bon ?**
+**Diapo 10 — Est-ce que c'est bon ?**
 
-- Référence exacte : Held-Karp (programmation dynamique, `O(N² · 2^N)`), possible jusqu'à environ 12 à 15 points.
+- Référence exacte : Held-Karp (programmation dynamique, `O(N² · 2^N)`), utilisé jusqu'à 15 points (la mémoire en `N · 2^N` limite au-delà).
 - Instance publique `berlin52` (TSPLIB), dont l'optimum est publié.
 - Écart à l'optimum NN et NN + 2-opt : `À MESURER` (benchmark B3).
 
 ## Texte oral
 
-> Pour planifier une tournée, on a besoin de la distance entre chaque paire de points. On lance un Dijkstra par point et on l'arrête dès qu'il a atteint tous les autres, ça évite d'explorer toute la ville.
+> Pour planifier une tournée, on a besoin de la distance entre chaque paire de points. On lance un Dijkstra par point et on l'arrête dès que tous les autres points sont traités. Le gain dépend de la position des points : on le mesure dans le benchmark B2.
 >
 > Le TSP est NP-difficile, donc on ne cherche pas l'optimum sur 100 points. On construit une première tournée avec le plus proche voisin : c'est rapide mais ça fait souvent des croisements. Ensuite 2-opt supprime ces croisements : on enlève deux arêtes, on reconnecte autrement, et on garde si c'est plus court.
 >
