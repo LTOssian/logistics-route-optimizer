@@ -1,6 +1,6 @@
 # 3. Dijkstra
 
-Orateur : à définir — 2 min
+Orateur : à définir — 2 min · Vocabulaire : [[glossaire]]
 
 ## Message clé
 

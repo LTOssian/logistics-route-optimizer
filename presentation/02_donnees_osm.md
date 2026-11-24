@@ -1,6 +1,6 @@
 # 2. Des données OSM au graphe
 
-Orateur : à définir — 1 min 30
+Orateur : à définir — 1 min 30 · Vocabulaire : [[glossaire]]
 
 ## Message clé
 
