@@ -24,14 +24,14 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 
 ## Branche de travail
 
-- Travaille **directement sur `main`** (pas de branche `feat/*` par défaut).
-- `main` est la base commune : code, docs et livrables y vivent.
-- `git pull` avant de commencer, push régulier.
+- Code : une branche par issue, PR vers `main`, merge quand la CI est verte.
+- Doc Obsidian : branche `documentation`. Diapos : branche `presentation`.
+- `git pull` avant de commencer, push régulier. Voir `05_workflow_git.md`.
 
 ## Avant toute action
 
-1. **Lis** `PROMPT/00_contexte_projet.md`, `01_etat_actuel.md`, `02_decisions.md`, `03_plan.md`, `04_conventions.md` et `05_workflow_git.md`.
-2. Identifie la **phase en cours** (dans `03_plan.md` et `01_etat_actuel.md`).
+1. **Lis** `PROMPT/00_contexte_projet.md`, `01_etat_actuel.md`, `../PLAN.md`, `04_conventions.md` et `05_workflow_git.md`.
+2. Identifie la **phase en cours** (dans `../TASKS.md` et `01_etat_actuel.md`).
 3. Vérifie l'état réel du dépôt (`git status`, `git log`, présence des fichiers).
 4. Si un élément manque ou est ambigu, **pose des questions** avant de coder.
 
@@ -44,7 +44,7 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 - **Un commit par unité logique**, message Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`…).
 - **Ne jamais committer** d'artefacts (`*.o`, binaires, `build/`, `.obsidian/*`).
 - **Ne pas ajouter de dépendance externe** (bibliothèque, framework de test) sans accord.
-- **Ne pas changer l'architecture ni les décisions** de `02_decisions.md` sans validation explicite du groupe.
+- **Ne pas changer l'architecture ni les décisions** de `PLAN.md` sans validation explicite du groupe.
 - **Ne pas sauter de phase** : implémente la phase en cours, pas la suivante.
 - **Commentaires en français**, identifiants en anglais.
 - **Reproductibilité** : toute partie aléatoire utilise une graine fixe documentée.
@@ -63,7 +63,7 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 2. Proposer un **mini-plan** (fichiers à créer/modifier, tests).
 3. Attendre validation si la tâche est ambiguë ou structurante.
 4. Implémenter.
-5. Compiler (`make`), exécuter les tests (`make test`).
+5. Compiler et tester dans Docker (`docker compose run --rm dev make test`).
 6. Corriger jusqu'à zéro warning + tests verts.
 7. Mettre à jour la doc concernée (`README` état d'avancement, `report/` si pertinent).
 8. Proposer un **message de commit**.
@@ -72,12 +72,11 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 ## Ce qu'il ne faut pas faire
 
 - Inventer des résultats, des benchmarks ou des optimaux « meilleurs connus ».
-- Modifier `PLAN.md` ou `02_decisions.md` sans discussion.
+- Modifier `PLAN.md` sans discussion.
 - Utiliser `gets`, `strcpy` non borné, `sprintf` non borné.
 - Mélanger code et notes de lecture.
 - Réécrire du code qui fonctionne sans raison.
-- Ajouter du code non testé dans `main`.
-- Multiplier les branches `feat/*` : par défaut, on travaille sur `main`.
+- Ajouter du code non testé dans `main`, ou merger une PR dont la CI est rouge.
 - Laisser des traces d'IA non relues (doc verbeuse, code non compris).
 
 ## Definition of Done (rappel)
