@@ -91,12 +91,12 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 
 ## Contexte technique résumé
 
-- Graphe : **liste d'adjacence**, arêtes orientées, poids `double` (mètres).
+- Graphe : **liste d'adjacence**, non orienté (chaque rue ajoutée dans les deux sens), poids `double` (mètres).
 - IDs : internes denses `0..n-1`.
 - Données : CSV (`n,m` puis `u,v,weight`) + `nodes.csv` (`id,lat,lon`) pour A\*.
 - Dijkstra : tas min binaire, lazy deletion, `INFINITY` pour inatteignable.
 - A\* : Haversine (admissible/consistante), arrêt au pop du but, pas de réouverture.
-- TSP : plus proche voisin + 2-opt ; référence Held-Karp sur petit N.
+- TSP : plus proche voisin + 2-opt ; référence Held-Karp jusqu'à 15 points.
 - CVRP : Clarke & Wright + Or-opt ; demandes synthétiques seedées.
 - Benchmarks : `CLOCK_MONOTONIC`, ≥ 5 répétitions, médiane ; CSV + plots.
 

@@ -85,7 +85,7 @@ u,v,weight
 2,1,2.0
 ```
 - `n` = nombre de nœuds, `m` = nombre d'arêtes.
-- Arêtes **orientées**. Pour un graphe non orienté, exporter les deux sens.
+- La structure stocke des arêtes orientées ; notre graphe est non orienté, donc chaque rue est exportée dans les deux sens.
 - IDs internes denses `0..n-1`.
 
 ### Coordonnées (CSV)

@@ -102,13 +102,13 @@ En C, pas de `std::priority_queue` : il faut les écrire soi-même.
 |---|---|---|
 | **open set** | tas min (binary heap) de `(f, node)` | extraire le min en `O(log V)` |
 | **closed set** | tableau de `bool` ou **hash set** | ids denses → tableau ; ids épars → hash map |
-| **g-score** | tableau `float g[V]` ou hash map | `+∞`/absent = pas encore atteint |
+| **g-score** | tableau `double g[V]` (ids denses) | `+∞`/absent = pas encore atteint |
 | **came_from** | tableau `int parent[V]` ou hash map | pour reconstruire le chemin |
 
 ```c
 typedef struct HeapItem {
-    float f;
-    int   node;
+    double f;
+    int    node;
 } HeapItem;
 
 typedef struct MinHeap {
@@ -118,7 +118,7 @@ typedef struct MinHeap {
 } MinHeap;
 ```
 
-Pour les **ids épars** ou les grandes villes, un `float g[V]` n'est pas toujours possible : utilise une **hash map** (cf. le cours hash map) `id → g` et `id → parent`.
+Dans notre projet, les ids sont renumérotés de `0` à `n-1` en Python : un simple tableau `double g[V]` suffit, pas besoin de hash map. On utilise `double` partout, comme pour les poids.
 
 > [!note] Pourquoi un tas min ?
 > On veut toujours le plus petit `f`. Un tableau trié coûte `O(V)` par insertion ; un tas min fait `O(log V)`. C'est ce qui donne la complexité `O(E log V)`.
@@ -170,7 +170,7 @@ reconstruire_chemin(came_from, n):
 
 # 6. Représentation du graphe
 
-Un graphe routier est **creux** (peu d'arêtes par nœud) et **orienté** (sens uniques) → **liste d'adjacence**.
+Un graphe routier est **creux** (peu d'arêtes par nœud) → **liste d'adjacence**. Les sens uniques le rendent orienté en réalité ; dans notre projet on le traite comme non orienté (chaque rue dans les deux sens), voir `PLAN.md`, phase 3.
 
 ## `Edge` — une arête sortante
 
