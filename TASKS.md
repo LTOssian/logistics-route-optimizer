@@ -6,7 +6,7 @@ Pour prendre une tâche : s'assigner sur l'issue GitHub correspondante.
 
 ## Mar. 24 – mer. 25 nov.
 
-- [ ] Relire et merger la PR #2 (Docker + CI)
+- [x] Relire et merger la PR #2 (Docker + CI)
 - [ ] Se répartir les issues (chacun s'assigne)
 - [ ] Tout le monde : `docker compose build` puis `docker compose run --rm dev make test` sur la branche de la phase 1
 - [ ] Phase 1 : renommage `dijkstra`, tas binaire, Dijkstra V2, oracle, CLI `path` (#1)
