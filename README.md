@@ -110,8 +110,12 @@ docker compose run --rm dev python scripts/osm_to_csv.py --overpass-url <miroir>
 - Tâches : [`TASKS.md`](TASKS.md), issues GitHub du milestone « Soutenance »
 - Soutenance : [`presentation/`](presentation/) (texte), branche `presentation` (diapos)
 
+## Usage de l'IA
+
+On a utilisé un assistant IA (Claude) comme outil d'appui : pour structurer le plan, mettre en place l'environnement Docker, relire le code et préparer une base de texte pour la soutenance. Le contexte qu'on lui donne est dans `PROMPT/`. Le code et les textes finaux sont relus, compris et modifiés par le groupe, et chacun peut expliquer ce qu'il présente.
+
 ## Branches
 
-- `main` : code testé, une PR par issue, CI obligatoire.
+- `main` : code testé, une PR par issue, CI obligatoire. C'est la branche rendue : `documentation` y est mergée avant le rendu.
 - `documentation` : ce vault Obsidian (plan, tâches, notes, soutenance, rapport).
 - `presentation` : diapos Marp.

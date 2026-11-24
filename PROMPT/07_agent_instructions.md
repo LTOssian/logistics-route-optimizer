@@ -20,7 +20,7 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 - **Évite le style « IA »** dans la documentation : formules génériques, emojis, callouts à outrance, listes interminables. Écris comme un étudiant.
 - Génère uniquement la documentation **utile** (pas de doc décorative).
 - Toute partie produite avec l'IA doit être **relue, comprise et modifiable** par le groupe.
-- **Avant un rendu**, nettoie la doc : supprime brouillons, redondances et passages non relus ; retire du dépôt remis tout ce qui n'a pas sa place (dont ce dossier `PROMPT/` s'il n'est pas demandé).
+- **Avant un rendu**, nettoie la doc : supprime brouillons, redondances et passages non relus ; le dossier `PROMPT/` reste dans le dépôt : l'usage de l'IA est déclaré dans le README, pas caché.
 
 ## Branche de travail
 
@@ -47,7 +47,7 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 - **Ne pas changer l'architecture ni les décisions** de `PLAN.md` sans validation explicite du groupe.
 - **Ne pas sauter de phase** : implémente la phase en cours, pas la suivante.
 - **Commentaires en français**, identifiants en anglais.
-- **Reproductibilité** : toute partie aléatoire utilise une graine fixe documentée.
+- **Reproductibilité** : toute partie aléatoire passe par `src/rng.{h,c}` (jamais `rand()`), avec une graine fixe documentée.
 
 ## Style de collaboration
 
