@@ -25,7 +25,7 @@ Les chiffres marqués `À MESURER` viennent des benchmarks (phase 7). On n'écri
 | 8 | [[08_demo\|Démo live]] | 1:30 | 14:00 | à définir |
 | 9 | [[09_conclusion\|Conclusion et limites]] | 1:00 | 15:00 | à définir |
 
-Questions du prof : voir [[questions_jury]].
+Questions du prof : voir [[questions_jury]]. Vocabulaire : [[glossaire]].
 
 ## Fil rouge
 
