@@ -8,14 +8,14 @@ A\* explore beaucoup moins de nœuds que Dijkstra et trouve exactement la même 
 
 ## Diapos
 
-**Diapo 9 — f = g + h**
+**Diapo 7 — f = g + h**
 
 - `g(n)` : distance réelle depuis la source.
 - `h(n)` : estimation du reste, ici la distance Haversine (vol d'oiseau sur la sphère) jusqu'à la cible.
 - On extrait le nœud de plus petit `f = g + h` au lieu du plus petit `g`.
 - Article : Hart, Nilsson et Raphael (1968), qui prouvent l'optimalité si `h` est admissible.
 
-**Diapo 10 — Pourquoi c'est encore optimal**
+**Diapo 8 — Pourquoi c'est encore optimal**
 
 - Admissible : une route est toujours au moins aussi longue que le vol d'oiseau, donc `h(n) ≤ distance réelle restante`.
 - Consistante : `h(u) ≤ w(u, v) + h(v)` (inégalité triangulaire), donc pas besoin de rouvrir un nœud fermé.

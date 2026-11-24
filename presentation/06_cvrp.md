@@ -8,7 +8,7 @@ Clarke & Wright fusionne des allers-retours en tournées tant que la capacité l
 
 ## Diapos
 
-**Diapo 14 — Clarke & Wright (1964)**
+**Diapo 11 — Clarke & Wright (1964)**
 
 - Départ : un aller-retour dépôt → client → dépôt par client.
 - Économie de servir `i` et `j` dans la même tournée : `s(i, j) = d(0, i) + d(0, j) − d(i, j)`.
@@ -16,12 +16,13 @@ Clarke & Wright fusionne des allers-retours en tournées tant que la capacité l
 - Complexité : `O(N² log N)` (le tri domine).
 - Schéma : deux allers-retours fusionnés en une tournée.
 
-**Diapo 15 — Or-opt et vérifications**
+**Diapo 12 — Or-opt, vérifications et résultats**
 
 - Or-opt : déplacer un segment de 1 à 3 clients ailleurs, dans la même tournée ou dans une autre si la capacité le permet. On garde si la distance totale baisse.
 - Objectif : distance totale minimale. Le nombre de véhicules est un résultat, pas une contrainte.
 - Contrôles automatiques : chaque client servi une fois, capacité respectée, toutes les tournées partent du dépôt et y reviennent.
-- Instance publique `A-n32-k5` (CVRPLIB), dont l'optimum est publié. Écart : `À MESURER` (benchmark B4).
+- Instance publique `A-n32-k5` (CVRPLIB) : optimum publié 784, avec 5 véhicules et des distances euclidiennes arrondies à l'entier. On calcule notre distance avec la même règle d'arrondi. Écart : `À MESURER` (benchmark B4).
+- Petit tableau B4 : C&W puis C&W + Or-opt (distance, véhicules, temps).
 
 ## Texte oral
 
@@ -42,4 +43,4 @@ Clarke & Wright fusionne des allers-retours en tournées tant que la capacité l
 
 ## Transition
 
-> Voyons maintenant ce que tout ça donne en chiffres.
+> Plutôt que d'autres chiffres, on vous montre l'outil en direct.

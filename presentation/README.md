@@ -11,19 +11,20 @@ Chaque note suit le même format :
 
 Les chiffres marqués `À MESURER` viennent des benchmarks (phase 7). On n'écrit aucun chiffre qui ne sort pas de `benchmarks/results/`.
 
-## Déroulé (15 min)
+## Déroulé (cible 13:30, marge 1:30 pour les transitions et les imprévus)
 
-| # | Partie | Durée | Fin à | Orateur |
+| # | Partie | Diapos | Durée | Fin à |
 |---|---|---|---|---|
-| 1 | [[01_probleme\|Problème et modélisation]] | 1:30 | 1:30 | à définir |
-| 2 | [[02_donnees_osm\|Des données OSM au graphe]] | 1:30 | 3:00 | à définir |
-| 3 | [[03_dijkstra\|Dijkstra]] | 2:00 | 5:00 | à définir |
-| 4 | [[04_astar\|A\*]] | 1:30 | 6:30 | à définir |
-| 5 | [[05_tsp\|Matrice de distances et TSP]] | 2:00 | 8:30 | à définir |
-| 6 | [[06_cvrp\|CVRP]] | 2:00 | 10:30 | à définir |
-| 7 | [[07_resultats\|Résultats]] | 2:00 | 12:30 | à définir |
-| 8 | [[08_demo\|Démo live]] | 1:30 | 14:00 | à définir |
-| 9 | [[09_conclusion\|Conclusion et limites]] | 1:00 | 15:00 | à définir |
+| 1 | [[01_probleme\|Problème et modélisation]] | 1–2 | 1:15 | 1:15 |
+| 2 | [[02_donnees_osm\|Des données OSM au graphe]] | 3–4 | 1:30 | 2:45 |
+| 3 | [[03_dijkstra\|Dijkstra]] | 5–6 | 2:00 | 4:45 |
+| 4 | [[04_astar\|A\*]] | 7–8 | 1:30 | 6:15 |
+| 5 | [[05_tsp\|Matrice et TSP]] | 9–10 | 2:00 | 8:15 |
+| 6 | [[06_cvrp\|CVRP]] | 11–12 | 2:00 | 10:15 |
+| 7 | [[07_demo\|Démo live]] | 13 | 1:45 | 12:00 |
+| 8 | [[08_conclusion\|Bilan, limites]] | 14–16 | 1:30 | 13:30 |
+
+Orateurs : à définir (chacun présente ce qu'il a codé). Les résultats sont montrés dans la partie de chaque algorithme ; le protocole et le détail des mesures sont dans [[annexe_benchmarks]] (diapos d'annexe, pour les questions).
 
 Questions du prof : voir [[questions_jury]]. Vocabulaire : [[glossaire]].
 

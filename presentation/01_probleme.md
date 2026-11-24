@@ -1,6 +1,6 @@
 # 1. Problème et modélisation
 
-Orateur : à définir — 1 min 30 · Vocabulaire : [[glossaire]]
+Orateur : à définir — 1 min 15 · Vocabulaire : [[glossaire]]
 
 ## Message clé
 
@@ -11,21 +11,14 @@ Planifier des livraisons revient à enchaîner quatre problèmes de graphes clas
 **Diapo 1 — Titre**
 
 - Optimisation de tournées logistiques
-- Noms du groupe, cours, date
+- Noms complets des trois membres, nom du cours, date
 
-**Diapo 2 — Le problème**
+**Diapo 2 — Le problème et sa modélisation**
 
-- Un entrepôt, N clients, chaque client a une demande (nombre de colis).
-- Plusieurs camionnettes de capacité Q.
+- Un entrepôt, N clients avec une demande, des camionnettes de capacité Q.
 - Trois questions : quel chemin entre deux adresses ? dans quel ordre livrer ? quel client dans quel camion ?
-
-**Diapo 3 — Modélisation**
-
-- Réseau routier = graphe G = (V, E), poids = longueur de la rue en mètres.
-- Plus court chemin entre deux points : Dijkstra, A\*.
-- Matrice des distances entre le dépôt et les N clients.
-- Une seule tournée (TSP), puis plusieurs véhicules à capacité limitée (CVRP).
-- Schéma du pipeline (voir README).
+- Schéma : OpenStreetMap → graphe → plus court chemin → matrice → TSP → CVRP.
+- Graphe G = (V, E) : intersections et rues, poids = longueur en mètres.
 
 ## Texte oral
 

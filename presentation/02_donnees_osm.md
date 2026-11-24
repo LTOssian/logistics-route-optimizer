@@ -8,14 +8,14 @@ On récupère le vrai réseau routier de Lyon avec un script Python, et le C ne 
 
 ## Diapos
 
-**Diapo 4 — D'OpenStreetMap au CSV**
+**Diapo 3 — D'OpenStreetMap au CSV**
 
 - OSMnx télécharge les routes carrossables (`network_type="drive"`) dans un carré centré sur la place Bellecour (demi-côté R).
 - On garde la plus grande composante connexe, pour que tous les points soient joignables.
 - Les identifiants OSM (grands, non consécutifs) sont renumérotés de 0 à n−1 en Python.
 - Export : `nodes.csv` (`id,lat,lon`), `edges.csv` (`u,v,weight` en mètres), `meta.txt` (date d'extraction, version d'OSMnx).
 
-**Diapo 5 — Le graphe en C**
+**Diapo 4 — Le graphe en C**
 
 - Liste d'adjacence : chaque nœud a la liste de ses arêtes sortantes.
 - Pourquoi pas une matrice V × V : un graphe routier est creux (2 à 3 rues par intersection). Pour 10 000 nœuds, une matrice de `double` prendrait 800 Mo.

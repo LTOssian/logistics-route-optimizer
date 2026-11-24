@@ -1,12 +1,9 @@
-# 7. Résultats
+# Annexe — protocole et benchmarks
 
-Orateur : à définir — 2 min · Vocabulaire : [[glossaire]]
 
-## Message clé
+Les résultats ne forment plus une partie à part : chaque benchmark est montré dans la partie de son algorithme (B1 en Dijkstra et A\*, B3 en TSP, B4 en CVRP, compromis qualité/temps en conclusion). Ce fichier garde le protocole et le détail, pour l'annexe des diapos, le rapport et les questions.
 
-Le temps et la qualité évoluent en sens inverse : chaque étape d'amélioration coûte du temps, et on peut le chiffrer.
-
-## Protocole (une diapo, 30 s)
+## Protocole
 
 - Même machine, compilation `-O2` pour les benchmarks (pas `-g`).
 - `CLOCK_MONOTONIC`, 5 répétitions, médiane.
@@ -21,23 +18,6 @@ Le temps et la qualité évoluent en sens inverse : chaque étape d'amélioratio
 | B2 | Matrice | N = 10, 20, 50, 100, 200 sur le plus grand graphe | temps |
 | B3 | TSP | NN, NN + 2-opt, Held-Karp (N ≤ 15) ; berlin52 | longueur, écart à l'optimum, temps |
 | B4 | CVRP | C&W, C&W + Or-opt ; N = 20 à 200 ; A-n32-k5 | distance, véhicules, écart, temps |
-
-## Diapos
-
-**Diapo 16 — Plus court chemin (B1)**
-
-- Courbe : temps en fonction de V, une courbe par algorithme (échelle log).
-- Chiffre clé : A\* explore `À MESURER` % des nœuds de Dijkstra.
-
-**Diapo 17 — Tournées (B3 et B4)**
-
-- Tableau : longueur et écart à l'optimum, NN vs NN + 2-opt, C&W vs C&W + Or-opt.
-- Courbe : temps en fonction de N.
-- Phrase de conclusion sur le compromis qualité/temps.
-
-## Texte oral
-
-> Tous les temps sont des médianes sur 5 répétitions, sur la même machine, avec une graine fixe. Pour le plus court chemin, `À MESURER`. Pour les tournées, 2-opt fait passer l'écart à l'optimum de `À MESURER` à `À MESURER` %, pour un temps `À MESURER`.
 
 ## Tableau des complexités (pour le rapport et en réserve pour les questions)
 
@@ -55,9 +35,5 @@ Le temps et la qualité évoluent en sens inverse : chaque étape d'amélioratio
 
 ## À préparer
 
-- Les 4 figures, générées par `benchmarks/plot.py` à partir des CSV.
-- Ne garder que 2 figures sur les diapos, le reste va dans le rapport.
-
-## Transition
-
-> Plutôt que des courbes, je vous montre l'outil en direct.
+- Les figures, générées par `benchmarks/plot.py` à partir des CSV.
+- B1 va sur la diapo 6 (et le chiffre clé sur la diapo 8), B3 sur la diapo 10, B4 sur la diapo 12, le compromis qualité/temps sur la diapo 14 (bilan). Le reste va dans le rapport.
