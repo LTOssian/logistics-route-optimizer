@@ -1,7 +1,12 @@
 services:
   dev:
-    build: .
-    image: lro-dev:1
+    build:
+      context: .
+      secrets:
+        - extra_ca
+    image: lro-dev:2
+    # Reconstruit l'image si le Dockerfile ou les requirements ont changé (sinon le cache rend ça instantané)
+    pull_policy: build
     volumes:
       - .:/work
     working_dir: /work
@@ -12,3 +17,8 @@ services:
       - SYS_PTRACE
     security_opt:
       - seccomp:unconfined
+
+secrets:
+  # Certificat racine facultatif (réseau d'entreprise) : export EXTRA_CA_FILE=/chemin/ca.pem
+  extra_ca:
+    file: ${EXTRA_CA_FILE:-./docker/no_extra_ca.pem}
