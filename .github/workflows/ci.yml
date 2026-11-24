@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Image Docker
+        run: docker compose build dev
+      - name: make test + valgrind
+        run: |
+          export HOST_UID=$(id -u) HOST_GID=$(id -g)
+          if [ ! -f Makefile ]; then echo "Pas encore de Makefile"; exit 0; fi
+          docker compose run --rm dev sh -c '
+            make clean && make test &&
+            for t in build/test_*; do
+              valgrind --leak-check=full --error-exitcode=1 -q "$t" > /dev/null || exit 1
+            done'
