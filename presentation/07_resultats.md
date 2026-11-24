@@ -19,7 +19,7 @@ Le temps et la qualité évoluent en sens inverse : chaque étape d'amélioratio
 |---|---|---|---|
 | B1 | Plus court chemin | Dijkstra V1, Dijkstra tas, A\* ; 4 tailles de graphe ; 100 paires | temps médian, nœuds *settled* |
 | B2 | Matrice | N = 10, 20, 50, 100, 200 sur le plus grand graphe | temps |
-| B3 | TSP | NN, NN + 2-opt, Held-Karp (N ≤ 12) ; berlin52 | longueur, écart à l'optimum, temps |
+| B3 | TSP | NN, NN + 2-opt, Held-Karp (N ≤ 15) ; berlin52 | longueur, écart à l'optimum, temps |
 | B4 | CVRP | C&W, C&W + Or-opt ; N = 20 à 200 ; A-n32-k5 | distance, véhicules, écart, temps |
 
 ## Diapos
