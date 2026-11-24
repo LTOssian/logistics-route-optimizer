@@ -1,0 +1,14 @@
+services:
+  dev:
+    build: .
+    image: lro-dev:1
+    volumes:
+      - .:/work
+    working_dir: /work
+    # Fichiers créés avec l'utilisateur de la machine hôte (évite un build/ appartenant à root sous Linux)
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    # Nécessaire pour gdb
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
