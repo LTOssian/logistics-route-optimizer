@@ -2,14 +2,16 @@
 
 ## Modèle de branches
 
-| Branche | Rôle | Qui y touche |
+| Branche | Rôle | Comment on y écrit |
 |---|---|---|
-| `main` | **branche de travail unique** : code, docs, livrables | tout le monde |
-| `documentation` | (optionnel) notes de lecture | rédaction |
+| `main` | code testé : `src/`, `tests/`, `scripts/`, `benchmarks/`, Docker | uniquement par PR, CI verte |
+| `<n°>-<titre>` | une branche par issue (bouton « Create a branch » de l'issue) | push libre par la personne assignée |
+| `documentation` | vault Obsidian : `PLAN.md`, `TASKS.md`, `etudes/`, `presentation/`, `report/` | push direct |
+| `presentation` | diapos Marp (`slides/`) | push direct |
 
-- On travaille **directement sur `main`** : c'est la base commune.
-- Une branche `feat/*` reste possible pour une modification risquée, mais elle est **très courte** et fusionnée dès que les tests passent.
-- Pas de branche « fourre-tout » qui reste ouverte des semaines.
+- Une issue = une branche courte, mergée dès que la CI passe.
+- `documentation` suit `main` : on y merge `main` de temps en temps (`git merge main`), sans rebase.
+- `presentation` suit `documentation` de la même façon.
 
 ## Commits
 
@@ -23,12 +25,13 @@ Types : `feat`, `fix`, `docs`, `test`, `chore`, `refactor`, `bench`, `perf`.
 
 Exemples :
 ```
-feat: graph + min-heap modules
-test: dijkstra against exhaustive oracle
-fix: heap pop order on equal keys
-docs: phase 1 notes
-chore: add Makefile and .gitignore entries
+feat: ajoute le tas binaire
+test: compare dijkstra à l'oracle exhaustif
+fix: ordre du pop à clés égales
+docs: notes de la phase 1
 ```
+
+Sujets en français, courts.
 
 Règles :
 - **Un commit = une chose** (pas un commit fourre-tout en fin de TP).
@@ -38,8 +41,8 @@ Règles :
 ## Push et synchronisation
 
 - `git pull --rebase` avant de commencer à travailler (évite les merges de bruit).
-- Pousser régulièrement sur `main`.
-- Ne **pas** force-push `main` ni `documentation` sans coordination.
+- Pousser régulièrement sa branche ; ouvrir la PR tôt (en brouillon si besoin).
+- Ne **jamais** force-push `main`, `documentation` ni `presentation`.
 - Sur sa **propre** branche, si rebase nécessaire : `git push --force-with-lease`.
 
 ## Extension Obsidian Git
@@ -53,11 +56,10 @@ Le plugin **Obsidian Git** peut auto-committer/pousser périodiquement. Pour év
 
 ## Revue
 
-Pour une petite équipe, une revue légère suffit. Checklist avant de pousser sur `main` :
+Pour une petite équipe, une revue légère suffit : un des deux autres relit la PR. La CI (`.github/workflows/ci.yml`) lance `make test` et valgrind dans l'image Docker. Checklist avant de demander la revue :
 
-- [ ] `make` compile sans warning (`-Werror`).
-- [ ] `make test` vert.
-- [ ] Pas de fuite mémoire (valgrind si disponible).
+- [ ] `docker compose run --rm dev make test` vert, sans warning (`-Werror`).
+- [ ] Pas de fuite mémoire (valgrind, lancé aussi par la CI).
 - [ ] Commit(s) conventionnel(s) et lisibles.
 - [ ] Documentation / commentaires à jour.
 - [ ] Pas d'artefact committé.
@@ -66,11 +68,11 @@ Pour une petite équipe, une revue légère suffit. Checklist avant de pousser s
 
 Une phase est terminée quand :
 
-1. Les livrables listés dans `03_plan.md` existent.
+1. Les livrables listés dans `../PLAN.md` existent.
 2. Les critères de validation de la phase passent.
 3. Le README/état d'avancement est mis à jour.
 4. Le rapport reçoit la section correspondante (au fur et à mesure, pas à la fin).
-5. Les changements sont sur `main` et poussés.
+5. La PR est mergée dans `main`.
 
 ## Résolution de conflits (rappel)
 
