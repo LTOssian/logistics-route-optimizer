@@ -1,59 +1,29 @@
 # 01 — État actuel du dépôt
 
-> [!info] Dernière mise à jour
-> Ce fichier décrit l'état au moment de la rédaction du plan. Vérifier `git log` en cas de doute.
+Mis à jour le 24 novembre 2026. En cas de doute, vérifier `git log` et `TASKS.md`.
 
 ## Branches
 
-- `main` : **branche de travail unique** (code, docs, livrables).
-- `documentation` : (optionnel) notes de lecture.
-
-> [!important] On travaille directement sur `main`. Voir `05_workflow_git.md`.
+| Branche | Contenu |
+|---|---|
+| `main` | plan, notes de lecture ; Docker et CI en PR (#2) |
+| `1-phase-1-dijkstra-sur-graphe-jouet` | phase 1 en cours : graphe, Dijkstra V1 `O(V²)`, tests |
+| `documentation` | vault Obsidian : plan, tâches, base de la soutenance |
+| `presentation` | diapos Marp |
 
 ## Ce qui existe
 
-### Notes de lecture (`etudes/`)
+- Notes de lecture (`etudes/`) : Dijkstra, A\*, Contraction Hierarchies.
+- Phase 1 (branche dédiée) : `src/graph.{h,c}`, `src/djikstra.{h,c}`, tests du graphe et de Dijkstra, graphe jouet `data/toy/toy1.csv` et ses résultats attendus. `make test` est vert et valgrind ne signale aucune fuite (vérifié dans Docker).
+- Image Docker commune et CI (PR #2).
+- Base de texte de la soutenance (`presentation/`) et liste des tâches (`TASKS.md`).
 
-| Fichier | Contenu | État |
-|---|---|---|
-| `djikstra.md` | Résumé de l'article de Dijkstra (MST + plus court chemin, ensembles A/B/C) | complet |
-| `a_star.md` | A\* : problématique, `f=g+h`, admissible/consistante, pseudo-code, structures C, complexité, cas limites, réouverture | complet |
-| `Contraction Hierarchies.md` | CH : prétraitement, witness search, ordre des nœuds, requête bidirectionnelle, stall-on-demand | complet |
+## Ce qui manque
 
-### Documentation projet
-
-| Fichier | Contenu |
-|---|---|
-| `README.md` | Objectif, arborescence cible, build, état d'avancement |
-| `PLAN.md` | Plan validé, phases 0 → 8 (source canonique) |
-| `PROMPT/` | Ce dossier de contexte |
-
-### Configuration
-
-- `.gitignore` : ignore `.obsidian/*`, `.trash/`, `.DS_Store`, `*.tmp`.
-- `doc/test.md` : supprimé (placeholder).
-
-## Ce qui manque encore
-
-- `src/` : aucun code C.
-- `tests/` : aucune suite de tests.
-- `Makefile` : absent.
-- `data/` : aucun graphe (jouet ou OSM).
-- `scripts/` : aucun pipeline OSM.
-- `benchmarks/` : aucun protocole ni résultat.
-- `report/` : aucun rapport.
+- Phase 1 : tas binaire, `main.c` (CLI `lro`), oracle exhaustif, renommage `djikstra` → `dijkstra`.
+- Phases 2 à 8 : rien de codé.
+- Note de lecture Clarke & Wright.
 
 ## Prochaine étape
 
-**Phase 1** (voir `03_plan.md`) : implémenter Dijkstra sur un graphe jouet, avec tas min et tests unitaires.
-
-Ordre recommandé :
-1. Créer le squelette (`Makefile`, `src/`, `tests/`, `data/toy/`).
-2. Écrire `graph.{h,c}` et `heap.{h,c}` + tests.
-3. Écrire `dijkstra.{h,c}` + tests (oracle exhaustif sur petits graphes).
-4. `main.c` de démonstration.
-5. Commit.
-
-## Conventions de branches
-
-Le travail se fait **directement sur `main`**. `documentation` n'est qu'une branche de notes optionnelle. Voir `05_workflow_git.md`.
+Voir `../TASKS.md` et le calendrier de la phase 9 dans `../PLAN.md`. Soutenance le vendredi 4 décembre 2026.
