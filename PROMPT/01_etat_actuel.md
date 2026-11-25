@@ -1,26 +1,25 @@
 # 01 — État actuel du dépôt
 
-Mis à jour le 24 novembre 2026. En cas de doute, vérifier `git log` et `TASKS.md`.
+Mis à jour le 26 novembre 2026. En cas de doute, vérifier `git log` et `TASKS.md`.
 
 ## Branches
 
 | Branche | Contenu |
 |---|---|
-| `main` | plan, notes de lecture, Docker et CI (PR #2), phase 1 V1 (PR #15) |
-| `1-phase-1-dijkstra-sur-graphe-jouet` | suite de la phase 1 (tas, CLI, oracle), voir #1 |
+| `main` | plan, notes de lecture, Docker et CI (PR #2), phase 1 complète (PR #15 et #16) |
 | `documentation` | vault Obsidian : plan, tâches, base de la soutenance |
 | `presentation` | diapos Marp |
 
 ## Ce qui existe
 
 - Notes de lecture (`etudes/`) : Dijkstra, A\*, Contraction Hierarchies.
-- Phase 1, V1 mergée dans `main` : `src/graph.{h,c}`, `src/djikstra.{h,c}`, tests du graphe et de Dijkstra, graphe jouet `data/toy/toy1.csv` et ses résultats attendus. `make test` est vert et valgrind ne signale aucune fuite, vérifiés par la CI.
+- Phase 1 mergée dans `main` : graphe, tas, Dijkstra (naive, tas, query), générateur `rng`, programme `lro path`, tests dont l'oracle exhaustif. `make test` est vert et valgrind ne signale aucune fuite, vérifiés par la CI. Visite du code : `presentation/code.md`.
 - Image Docker commune et CI, mergées dans `main`.
 - Base de texte de la soutenance (`presentation/`) et liste des tâches (`TASKS.md`).
 
 ## Ce qui manque
 
-- Phase 1 : tas binaire, `main.c` (CLI `lro`), oracle exhaustif, renommage `djikstra` → `dijkstra`.
+- Retouches de la phase 1 relevées en review : #17.
 - Phases 2 à 8 : rien de codé.
 - Note de lecture Clarke & Wright.
 
