@@ -3,8 +3,8 @@ CFLAGS   = -Wall -Wextra -Werror -std=c11 -g
 LDLIBS   = -lm
 BUILD    = build
 
-LIB_SRC  = src/graph.c src/dijkstra.c
-LIB_HDR  = src/graph.h src/dijkstra.h
+LIB_SRC  = src/graph.c src/dijkstra.c src/heap.c
+LIB_HDR  = src/graph.h src/dijkstra.h src/heap.h
 
 TEST_GRAPH    = $(BUILD)/test_graph
 TEST_DIJKSTRA = $(BUILD)/test_dijkstra
