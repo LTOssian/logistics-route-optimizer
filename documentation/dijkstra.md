@@ -48,7 +48,9 @@ C'est une **exploration en cercles concentriques** autour de la source.
         (10)
 ```
 
-Depuis `S` : on découvre `A` (2), puis `B` (5), puis `C` (10) — dans l'ordre des distances.
+Poids : `S–A = 2`, `A–B = 5`, `B–C = 1`, `S–C = 10`.
+
+Depuis `S`, dans l'ordre des distances : `A` à 2, puis `B` à 7 (via `A`), puis `C` à 8 (via `B`, et non 10 par l'arête directe).
 
 ---
 
@@ -99,7 +101,7 @@ Le tableau `previous` mémorise le prédécesseur sur le meilleur chemin connu :
 
 - Avantage : très simple, pas de structure auxiliaire.
 - Inconvénient : lent sur de grands graphes.
-- C'est la version du projet (`src/dijkstra.c`), pour valider la correction.
+- C'est `dijkstra_naive`, gardée comme référence pour le benchmark.
 
 ### Version optimisée — `O((V+E) log V)`
 
@@ -111,6 +113,10 @@ On remplace la recherche linéaire par un **tas min** (binary heap) contenant `(
 
 > [!note] Lazy deletion
 > Pas besoin de `decrease-key` : quand une distance s'améliore, on insère une **nouvelle** entrée `(distance, nœud)` dans le tas. Les anciennes sont ignorées au pop.
+
+### Arrêt anticipé : `dijkstra_query`
+
+Même algorithme avec le tas, mais on s'arrête dès que la **cible sort du tas**. Seule la distance de la cible est alors garantie. C'est ce que fait `lro path`.
 
 ---
 
@@ -175,9 +181,12 @@ typedef struct DijkstraResult {
     int     node_count;   // nombre de nœuds
     double *distances;    // distances[index] = distance minimale source -> index
     int    *previous;     // previous[index] = prédécesseur sur le chemin
+    int     settled_count; // nombre de nœuds extraits et fermés (settled)
 } DijkstraResult;
 
 DijkstraResult *dijkstra(const Graph *graph, int source);
+DijkstraResult *dijkstra_naive(const Graph *graph, int source);
+DijkstraResult *dijkstra_query(const Graph *graph, int source, int target);
 int            *dijkstra_path(const DijkstraResult *result, int target, int *path_length);
 void            dijkstra_result_free(DijkstraResult *result);
 ```
@@ -212,13 +221,15 @@ graph_free(graph);
 
 ## 10. Tests
 
-Voir `tests/test_djisktra.c` :
+Voir `tests/test_dijkstra.c` :
 
 1. **Cas simple** : détour plus court choisi (`0→1→2` = 2 au lieu de `0→2` = 3).
 2. **Inatteignable** : nœud isolé → `INFINITY`, chemin `NULL`.
 3. **Égalités** : deux chemins de même longueur → distance correcte, chemin valide.
 4. **`toy1.csv`** : distances `[0, 8, 9, 5, 7]` + chemins exacts.
 5. **Paramètres invalides** : `NULL`, source hors bornes → `NULL`.
+6. **Oracle** (`tests/test_oracle.c`) : on essaie tous les chemins simples sur de petits graphes et on compare à Dijkstra.
+7. **`toy1.expected`** (`tests/test_expected.c`) : distances et chemins du fichier.
 
 ---
 
