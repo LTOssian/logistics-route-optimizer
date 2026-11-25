@@ -17,10 +17,11 @@ Projet d'optimisation de tournées logistiques : implémentation et comparaison 
 ├── PLAN.md              # plan validé (phases 0 → 9)
 ├── TASKS.md             # tâches jusqu'à la soutenance
 ├── presentation/        # base de texte de la soutenance
+├── documentation/       # cours (graphes, Dijkstra)
 ├── etudes/              # notes de lecture des articles
 ├── report/              # rapport académique (à venir)
-├── src/                 # code C (à venir)
-├── tests/               # tests unitaires (à venir)
+├── src/                 # code C : graphe, tas, Dijkstra, rng, main
+├── tests/               # tests unitaires, oracle
 ├── data/                # graphes jouets / export OSM
 ├── benchmarks/          # protocole et résultats (à venir)
 ├── scripts/             # pipeline OSM (Python)
@@ -57,16 +58,22 @@ La CI GitHub (`.github/workflows/ci.yml`) lance `make test` et valgrind dans cet
 ## Build
 
 ```sh
-make        # compile
+make        # compile lro et les tests
 make test   # compile + exécute les tests
 make clean  # nettoie les artefacts
+```
+
+## Utilisation
+
+```sh
+docker compose run --rm dev ./build/lro path data/toy/toy1.csv 0 4
 ```
 
 ## État d'avancement
 
 - [x] Notes de lecture : Dijkstra, A\*, Contraction Hierarchies
 - [x] Décisions techniques et plan validés
-- [ ] Phase 1 — Dijkstra sur graphe jouet (V1 faite, tas en cours)
+- [x] Phase 1 — Dijkstra sur graphe jouet
 - [ ] Phase 2 — A\*
 - [ ] Phase 3 — pipeline OSM
 - [ ] Phase 4 — matrice de distances

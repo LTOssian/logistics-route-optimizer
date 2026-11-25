@@ -1,29 +1,55 @@
 CC       = gcc
-CFLAGS   = -Wall -Wextra -Werror -std=c11 -g
+CFLAGS = -Wall -Wextra -Werror -std=c11 -g -Isrc
 LDLIBS   = -lm
 BUILD    = build
 
-LIB_SRC  = src/graph.c src/djikstra.c
-LIB_HDR  = src/graph.h src/djikstra.h
+LIB_SRC  = src/graph.c src/dijkstra.c src/heap.c
+LIB_HDR  = src/graph.h src/dijkstra.h src/heap.h
 
+LRO           = $(BUILD)/lro
 TEST_GRAPH    = $(BUILD)/test_graph
-TEST_DJIKSTRA = $(BUILD)/test_djisktra
-TEST_BINS     = $(TEST_GRAPH) $(TEST_DJIKSTRA)
+TEST_DIJKSTRA = $(BUILD)/test_dijkstra
+TEST_HEAP     = $(BUILD)/test_heap
+TEST_RNG      = $(BUILD)/test_rng
+TEST_ORACLE   = $(BUILD)/test_oracle
+TEST_EXPECTED = $(BUILD)/test_expected
+TEST_BINS     = $(TEST_GRAPH) $(TEST_DIJKSTRA) $(TEST_HEAP) $(TEST_RNG) $(TEST_ORACLE) $(TEST_EXPECTED)
 
-all: $(TEST_BINS)
+all: $(LRO) $(TEST_BINS)
 
 $(BUILD):
 	mkdir -p $(BUILD)
 
+$(LRO): src/main.c $(LIB_SRC) $(LIB_HDR) | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ src/main.c $(LIB_SRC) $(LDLIBS)
+
 $(TEST_GRAPH): src/graph.c tests/test_graph.c src/graph.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -o $@ src/graph.c tests/test_graph.c
 
-$(TEST_DJIKSTRA): $(LIB_SRC) tests/test_djisktra.c $(LIB_HDR) | $(BUILD)
-	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) tests/test_djisktra.c $(LDLIBS)
+$(TEST_DIJKSTRA): $(LIB_SRC) tests/test_dijkstra.c $(LIB_HDR) | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) tests/test_dijkstra.c $(LDLIBS)
 
-test: $(TEST_BINS)
+$(TEST_HEAP): src/heap.c src/rng.c tests/test_heap.c src/heap.h src/rng.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ src/heap.c src/rng.c tests/test_heap.c
+
+$(TEST_RNG): src/rng.c tests/test_rng.c src/rng.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ src/rng.c tests/test_rng.c
+
+$(TEST_ORACLE): $(LIB_SRC) src/rng.c tests/test_oracle.c $(LIB_HDR) src/rng.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) src/rng.c tests/test_oracle.c $(LDLIBS)
+
+$(TEST_EXPECTED): $(LIB_SRC) tests/test_expected.c $(LIB_HDR) | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) tests/test_expected.c $(LDLIBS)
+
+test: $(LRO) $(TEST_BINS)
 	./$(TEST_GRAPH)
-	./$(TEST_DJIKSTRA)
+	./$(TEST_DIJKSTRA)
+	./$(TEST_HEAP)
+	./$(TEST_RNG)
+	./$(TEST_ORACLE)
+	./$(TEST_EXPECTED)
+	./$(LRO) path data/toy/toy1.csv 0 4 | grep -q "distance = 7.00"
+	@echo "=> test CLI : OK"
 
 clean:
 	rm -rf $(BUILD)
