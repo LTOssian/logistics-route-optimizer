@@ -149,7 +149,7 @@ for (Edge *e = g->adjacency[u]; e != NULL; e = e->next) {
 
 - Lazy deletion : on réinsère, et on ignore les entrées périmées
 - Tests : graphe jouet du CLRS, inatteignable, source invalide
-- <span class="todo">Oracle exhaustif (≤ 8 nœuds) : à écrire, #1</span>
+- Oracle exhaustif : 100 graphes aléatoires (≤ 8 nœuds), 0 écart
 
 </div>
 <div class="ph">Courbe B1 : temps V1 / V2 / A* selon V</div>
