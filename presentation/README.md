@@ -26,7 +26,7 @@ Les chiffres marqués `À MESURER` viennent des benchmarks (phase 7). On n'écri
 
 Orateurs : à définir (chacun présente ce qu'il a codé). Les résultats sont montrés dans la partie de chaque algorithme ; le protocole et le détail des mesures sont dans [[annexe_benchmarks]] (diapos d'annexe, pour les questions).
 
-Questions du prof : voir [[questions_jury]]. Vocabulaire : [[glossaire]].
+Questions du prof : voir [[questions_jury]]. Vocabulaire : [[glossaire]]. Explication du code : [[code]].
 
 ## Fil rouge
 
