@@ -1,6 +1,6 @@
 #include "heap.h"
+#include "rng.h"
 
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -38,16 +38,6 @@ static void print_suite_result(const char *name) {
   total_errors += error_count;
   error_count = 0;
   check_count = 0;
-}
-
-/* xorshift64 local : remplaçable par rng_next() une fois rng.{h,c} écrit. */
-static uint64_t next_random(uint64_t *state) {
-  uint64_t x = *state;
-  x ^= x << 13;
-  x ^= x >> 7;
-  x ^= x << 17;
-  *state = x;
-  return x;
 }
 
 /* Création, état initial et paramètres invalides (NULL, capacité <= 0). */
@@ -193,11 +183,12 @@ static void test_heap_random(void) {
   enum { COUNT = 500 };
   int seen[COUNT] = {0};
 
-  uint64_t state = 42; /* graine fixe : test reproductible */
+  Rng rng;
+  rng_seed(&rng, 42); /* graine fixe : test reproductible */
   int pushed = 0;
   for (int index = 0; index < COUNT; index++) {
-    /* clés dans [0, 100) : beaucoup de doublons */
-    double key = (double)(next_random(&state) % 100);
+    /* clés entières dans [0, 100) : beaucoup de doublons */
+    double key = (double)rng_int(&rng, 100);
     if (heap_push(heap, key, index))
       pushed++;
   }
