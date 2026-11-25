@@ -3,12 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/**
- * @brief Alloue un graphe à `node_count` nœuds et zéro arête.
- *
- * Le tableau `adjacency` est initialisé à NULL avec `calloc`, ce qui
- * garantit que chaque liste d'adjacence est vide au départ.
- */
 Graph *graph_new(int node_count) {
   if (node_count <= 0)
     return NULL;
@@ -28,12 +22,6 @@ Graph *graph_new(int node_count) {
   return graph;
 }
 
-/**
- * @brief Ajoute l'arête orientée `from -> to` de poids `weight`.
- *
- * L'arête est insérée en tête de la liste d'adjacence de `from` : aucune
- * traversée n'est nécessaire, le coût est donc O(1).
- */
 int graph_add_edge(Graph *graph, int from, int to, double weight) {
   if (graph == NULL)
     return 0;
@@ -56,12 +44,6 @@ int graph_add_edge(Graph *graph, int from, int to, double weight) {
   return 1;
 }
 
-/**
- * @brief Libère le graphe et toutes ses arêtes.
- *
- * On libère d'abord chaque maillon de chaque liste d'adjacence, puis le
- * tableau de têtes, puis la structure elle-même.
- */
 void graph_free(Graph *graph) {
   if (graph == NULL)
     return;
@@ -78,19 +60,6 @@ void graph_free(Graph *graph) {
   free(graph);
 }
 
-/**
- * @brief Charge un graphe depuis un fichier CSV canonique.
- *
- * Le fichier est lu en deux passes :
- *  - passe 1 : trouver la première ligne à deux entiers (nombre de nœuds,
- *    nombre d'arêtes) ;
- *  - passe 2 : créer le graphe puis ajouter chaque ligne à trois nombres
- *    (from, to, weight) comme une arête.
- *
- * Les lignes non numériques (en-têtes, commentaires, lignes vides) sont
- * ignorées. Le graphe n'est retourné que si le nombre d'arêtes lues
- * correspond au nombre annoncé.
- */
 Graph *graph_load_csv(const char *path) {
   if (path == NULL)
     return NULL;

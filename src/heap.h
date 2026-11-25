@@ -40,6 +40,9 @@ MinHeap *heap_new(int capacity);
 
 /**
  * @brief Insère l'entrée (key, node).
+ * @param heap le tas.
+ * @param key la clé de l'entrée.
+ * @param node le nœud de l'entrée.
  * @return 1 en cas de succès, 0 si `heap` est NULL ou si la croissance échoue
  *         (le tas reste alors valide et inchangé).
  */

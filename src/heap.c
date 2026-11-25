@@ -2,30 +2,12 @@
 
 #include <stdlib.h>
 
-/**
- * @file heap.c
- * @brief Tas min binaire (implémentation naïve).
- *
- * Le tas est utilisé pour améliorer la complexité de Dijkstra à O((V + E) log V).
- * Il est implémenté par un tableau dynamique, avec une croissance par doublement.
- */
-
- /** 
- * @brief Échange deux entrées du tas.
- * @param a première entrée.
- * @param b deuxième entrée.
- */
 static void swap_items(HeapItem *a, HeapItem *b) {
   HeapItem tmp = *a;
   *a = *b;
   *b = tmp;
 }
 
-/**
- * @brief Remonte une entrée dans le tas.
- * @param heap le tas.
- * @param index l'index de l'entrée à remonter.
- */
 static void sift_up(MinHeap *heap, int index) {
   while (index > 0) {
     int parent = (index - 1) / 2;
@@ -36,11 +18,6 @@ static void sift_up(MinHeap *heap, int index) {
   }
 }
 
-/**
- * @brief Descend une entrée dans le tas.
- * @param heap le tas.
- * @param index l'index de l'entrée à descendre.
- */
 static void sift_down(MinHeap *heap, int index) {
   for (;;) {
     int left = 2 * index + 1;
@@ -59,13 +36,6 @@ static void sift_down(MinHeap *heap, int index) {
     index = smallest;
   }
 }
-
-/**
- * @brief Alloue un tas vide.
- * @param capacity capacité initiale (capacity >= 1).
- * @return le tas, ou NULL si `capacity` est invalide ou si l'allocation échoue.
- * @note À libérer avec heap_free().
- */
 
 MinHeap *heap_new(int capacity) {
   if (capacity <= 0)
@@ -86,14 +56,6 @@ MinHeap *heap_new(int capacity) {
   return heap;
 }
 
-/**
- * @brief Insère l'entrée (key, node).
- * @param heap le tas.
- * @param key la clé de l'entrée.
- * @param node le nœud de l'entrée.
- * @return 1 en cas de succès, 0 si `heap` est NULL ou si la croissance échoue
- *         (le tas reste alors valide et inchangé).
- */
 int heap_push(MinHeap *heap, double key, int node) {
   if (heap == NULL)
     return 0;
@@ -115,12 +77,6 @@ int heap_push(MinHeap *heap, double key, int node) {
   return 1;
 }
 
-/**
- * @brief Extrait l'entrée de plus petite clé.
- * @param heap le tas.
- * @param out reçoit l'entrée extraite.
- * @return 1 en cas de succès, 0 si le tas est vide ou si un paramètre est NULL.
- */
 int heap_pop(MinHeap *heap, HeapItem *out) {
   if (heap == NULL || out == NULL || heap->size == 0)
     return 0;
@@ -134,19 +90,10 @@ int heap_pop(MinHeap *heap, HeapItem *out) {
   return 1;
 }
 
-/**
- * @brief Teste si le tas est vide.
- * @param heap le tas.
- * @return 1 si vide ou NULL, 0 sinon.
- */
 int heap_is_empty(const MinHeap *heap) {
   return heap == NULL || heap->size == 0;
 }
 
-/**
- * @brief Libère le tas.
- * @param heap tas à libérer (NULL accepté).
- */
 void heap_free(MinHeap *heap) {
   if (heap == NULL)
     return;
