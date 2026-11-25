@@ -110,6 +110,8 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Condition d'arrêt | au pop du but / à son insertion | au pop | seule façon de garantir l'optimalité |
 | Réouverture | rouvrir / ne pas rouvrir | ne pas rouvrir | Haversine consistante → le premier `g` est définitif |
 | Coordonnées | dans `Graph` / fichier séparé | dans `Graph` (optionnel) | A\* en a besoin ; optionnel pour charger un graphe sans coords |
+| Ordre avec la phase 3 | après / en parallèle | en parallèle : format des CSV figé dans `PROMPT/04_conventions.md`, la phase 2 seule touche au C, A\* testé sur des graphes aléatoires admissibles par construction | Lyon n'est pas nécessaire pour coder A\*, seulement pour le benchmark (#8) |
+| Option de la CLI | `--algo` / `--astar <nodes.csv>` | `lro path <edges.csv> <source> <cible> [--astar <nodes.csv>]` | une seule option, qui donne aussi le fichier de coordonnées |
 
 **Validation croisée :** sur graphe jouet **et** ville, la distance d'A\* égale celle de Dijkstra à une tolérance près (`|a − b| ≤ 1e-9 × max(1, |a|)`) : deux chemins de même longueur peuvent différer au dernier bit.
 
