@@ -1,4 +1,4 @@
-#include "djikstra.h"
+#include "dijkstra.h"
 
 #include <math.h>
 #include <stdlib.h>

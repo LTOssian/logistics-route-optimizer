@@ -99,7 +99,7 @@ Le tableau `previous` mémorise le prédécesseur sur le meilleur chemin connu :
 
 - Avantage : très simple, pas de structure auxiliaire.
 - Inconvénient : lent sur de grands graphes.
-- C'est la version du projet (`src/djikstra.c`), pour valider la correction.
+- C'est la version du projet (`src/dijkstra.c`), pour valider la correction.
 
 ### Version optimisée — `O((V+E) log V)`
 
@@ -116,11 +116,11 @@ On remplace la recherche linéaire par un **tas min** (binary heap) contenant `(
 
 ## 6. Complexité
 
-| Version | Temps | Mémoire |
-|---|---|---|
-| Scan linéaire | `O(V²)` | `O(V)` |
-| Tas binaire | `O((V + E) log V)` | `O(V)` |
-| Tas de Fibonacci | `O(E + V log V)` | `O(V)` |
+| Version          | Temps              | Mémoire |
+| ---------------- | ------------------ | ------- |
+| Scan linéaire    | `O(V²)`            | `O(V)`  |
+| Tas binaire      | `O((V + E) log V)` | `O(V)`  |
+| Tas de Fibonacci | `O(E + V log V)`   | `O(V)`  |
 
 > [!note] Graphe routier
 > Un graphe routier est **creux** : `E ≈ c·V` (quelques arêtes par nœud). Le tas binaire est donc nettement meilleur que `O(V²)` sur une ville.
@@ -149,24 +149,24 @@ reconstruire(previous, target):
 
 ## 8. Cas limites
 
-| Cas | Comportement attendu |
-|---|---|
-| **Source = cible** | distance `0`, chemin `[source]` |
-| **Cible inatteignable** | `distances = INFINITY`, pas de chemin (`NULL`) |
-| **Plusieurs chemins optimaux** | n'importe lequel est valide (départage arbitraire) |
-| **Poids négatifs** | **interdit** → Dijkstra faux, utiliser Bellman-Ford |
-| **Graphe non connexe** | certains nœuds restent `INFINITY` |
-| **Source invalide** | erreur (`NULL`) |
-| **Graphe vide / `NULL`** | erreur (`NULL`) |
+| Cas                            | Comportement attendu                                |
+| ------------------------------ | --------------------------------------------------- |
+| **Source = cible**             | distance `0`, chemin `[source]`                     |
+| **Cible inatteignable**        | `distances = INFINITY`, pas de chemin (`NULL`)      |
+| **Plusieurs chemins optimaux** | n'importe lequel est valide (départage arbitraire)  |
+| **Poids négatifs**             | **interdit** → Dijkstra faux, utiliser Bellman-Ford |
+| **Graphe non connexe**         | certains nœuds restent `INFINITY`                   |
+| **Source invalide**            | erreur (`NULL`)                                     |
+| **Graphe vide / `NULL`**       | erreur (`NULL`)                                     |
 
 ---
 
 ## 9. Implémentation C du projet
 
-| Fichier | Rôle |
-|---|---|
-| `src/djikstra.h` | struct `DijkstraResult` + prototypes documentés |
-| `src/djikstra.c` | `dijkstra`, `dijkstra_path`, `dijkstra_result_free` |
+| Fichier          | Rôle                                                |
+| ---------------- | --------------------------------------------------- |
+| `src/dijkstra.h` | struct `DijkstraResult` + prototypes documentés     |
+| `src/dijkstra.c` | `dijkstra`, `dijkstra_path`, `dijkstra_result_free` |
 
 ### API
 
@@ -186,7 +186,7 @@ void            dijkstra_result_free(DijkstraResult *result);
 
 ```c
 #include "graph.h"
-#include "djikstra.h"
+#include "dijkstra.h"
 
 Graph *graph = graph_load_csv("data/toy/toy1.csv");
 DijkstraResult *result = dijkstra(graph, 0);
@@ -234,4 +234,4 @@ Voir `tests/test_djisktra.c` :
 
 ## Référence
 
-- Dijkstra, E. W. (1959). *A note on two problems in connexion with graphs.* Numerische Mathematik, 1, 269–271. Voir `etudes/djikstra.md`.
+- Dijkstra, E. W. (1959). _A note on two problems in connexion with graphs._ Numerische Mathematik, 1, 269–271. Voir `etudes/dijkstra.md`.

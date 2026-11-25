@@ -1,10 +1,10 @@
-#ifndef DJIKSTRA_H
-#define DJIKSTRA_H
+#ifndef DIJKSTRA_H
+#define DIJKSTRA_H
 
 #include "graph.h"
 
 /**
- * @file djikstra.h
+ * @file dijkstra.h
  * @brief Plus courts chemins depuis une source (algorithme de Dijkstra).
  */
 
