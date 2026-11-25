@@ -47,7 +47,6 @@ Sur la diapo 5, l'extrait de code (relâchement, 6 lignes) est simplifié : le d
 
 ## À vérifier
 
-- Le nom des fichiers : `djikstra` doit être renommé en `dijkstra` avant la soutenance (issue Phase 1).
 
 ## Transition
 

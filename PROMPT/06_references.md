@@ -9,7 +9,7 @@
 Dijkstra, E. W. (1959). *A note on two problems in connexion with graphs.* Numerische Mathematik, 1, 269–271.
 
 - Plus court chemin (et arbre couvrant minimal).
-- Notes : [`../etudes/djikstra.md`](../etudes/djikstra.md)
+- Notes : [`../etudes/dijkstra.md`](../etudes/dijkstra.md)
 
 ### 2. Hart, Nilsson & Raphael (1968)
 Hart, P. E., Nilsson, N. J., & Raphael, B. (1968). *A formal basis for the heuristic determination of minimum cost paths.* IEEE Transactions on Systems Science and Cybernetics, 4(2), 100–107.
