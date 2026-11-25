@@ -76,26 +76,51 @@ tests/
 
 ### Graphe (CSV)
 
-`data/.../<nom>.csv` :
+`edges.csv` (jouet : `data/toy/toy1.csv`), lu par `graph_load_csv` :
 ```
 n,m
+5,10
 u,v,weight
-0,1,4.0
-0,2,1.0
-2,1,2.0
+0,1,10.0
 ```
-- `n` = nombre de nœuds, `m` = nombre d'arêtes.
-- La structure stocke des arêtes orientées ; notre graphe est non orienté, donc chaque rue est exportée dans les deux sens.
+- `n` = nombre de nœuds, `m` = nombre de lignes d'arêtes qui suivent.
+- La structure stocke des arêtes orientées ; notre graphe est non orienté, donc chaque rue est exportée dans les deux sens (`m` compte les deux sens).
 - IDs internes denses `0..n-1`.
+- Poids en mètres, en pleine précision (`repr` côté Python).
 
 ### Coordonnées (CSV)
 
-`data/.../<nom>_nodes.csv` :
+`nodes.csv` (jouet : `data/toy/toy1_nodes.csv`), lu par `graph_load_nodes_csv(graph, path)` après `graph_load_csv` :
 ```
 id,lat,lon
-0,48.8566,2.3522
+0,45.7578,4.8320
 ```
-Nécessaire à l'heuristique Haversine de A\*.
+- Une ligne par nœud, `id` de 0 à n−1 dans l'ordre ; le chargement échoue si le nombre de lignes ne vaut pas `n`.
+- Degrés décimaux (WGS84), pleine précision.
+- Optionnel : sans ce fichier, Dijkstra fonctionne ; A\* refuse un graphe sans coordonnées.
+
+### Données OSM
+
+```
+data/osm/lyon_<R>/
+├── edges.csv
+├── nodes.csv
+└── meta.txt     # date d'extraction, version d'OSMnx, R, n, m
+```
+R = 500, 1000, 2000, 4000.
+
+### Ligne de commande
+
+```
+lro path <edges.csv> <source> <cible> [--astar <nodes.csv>]
+```
+Sans `--astar` : `dijkstra_query`. Avec : A\*. La sortie garde le même format (`distance = …`, `settled = …`, `chemin = …`) pour comparer les deux.
+
+### Qui touche quoi (phases 2 et 3 en parallèle)
+
+- Phase 2 (#3) : seule à modifier `src/graph.{h,c}` (coordonnées + `graph_load_nodes_csv`), `src/main.c` et le `Makefile`.
+- Phase 3 (#4) : seulement `scripts/` et `data/osm/`. La vérification côté C se fait avec `lro path` déjà existant, sans modifier le C.
+- Graphes de test d'A\* sans Lyon : coordonnées tirées au hasard, puis poids de chaque arête = Haversine × (1 + x), x dans [0, 1) (générateur `src/rng`). L'heuristique est ainsi admissible par construction.
 
 ## Tests
 
