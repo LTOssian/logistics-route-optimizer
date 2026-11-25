@@ -26,12 +26,12 @@ Beaucoup de problèmes se ramènent à « comment aller d'un point A à un point
 
 Les structures linéaires (tableau, liste) ne suffisent pas : il faut représenter des **relations multiples**.
 
-| Structure | Modélise |
-|---|---|
-| Tableau | une suite d'éléments |
+| Structure     | Modélise                               |
+| ------------- | -------------------------------------- |
+| Tableau       | une suite d'éléments                   |
 | Liste chaînée | une suite avec insertions/suppressions |
-| Hash map | une association clé → valeur |
-| **Graphe** | des **relations** entre éléments |
+| Hash map      | une association clé → valeur           |
+| **Graphe**    | des **relations** entre éléments       |
 
 ---
 
@@ -48,9 +48,10 @@ Les structures linéaires (tableau, liste) ne suffisent pas : il faut représent
 | **Chemin**        | Suite de sommets reliés par des arêtes.                                    |
 | **Cycle**         | Chemin qui revient à son point de départ.                                  |
 | **Connexe**       | Tout sommet est atteignable depuis tout autre.                             |
-| **DAG**           | Graphe orienté **sans cycle** (*Directed Acyclic Graph*).                  |
+| **DAG**           | Graphe orienté **sans cycle** (_Directed Acyclic Graph_).                  |
 
 > [!note] Connexité d'un graphe orienté
+>
 > - **Faiblement connexe** : connexe si on ignore le sens des arêtes.
 > - **Fortement connexe** : pour tout couple `(u, v)`, il existe un chemin `u -> v` **et** `v -> u`.
 >
@@ -60,13 +61,13 @@ Les structures linéaires (tableau, liste) ne suffisent pas : il faut représent
 
 ## 3. Types de graphes
 
-| Type | Exemple |
-|---|---|
-| **Non orienté** | amitiés, routes à double sens |
-| **Orienté** | followers, sens uniques, dépendances |
-| **Pondéré** | distances, temps de trajet, coûts |
-| **DAG** | dépendances de compilation, graphe de tâches |
-| **Biparti** | clients ↔ produits, étudiants ↔ cours |
+| Type            | Exemple                                      |
+| --------------- | -------------------------------------------- |
+| **Non orienté** | amitiés, routes à double sens                |
+| **Orienté**     | followers, sens uniques, dépendances         |
+| **Pondéré**     | distances, temps de trajet, coûts            |
+| **DAG**         | dépendances de compilation, graphe de tâches |
+| **Biparti**     | clients ↔ produits, étudiants ↔ cours        |
 
 ---
 
@@ -79,8 +80,8 @@ Deux représentations classiques :
 | Mémoire             | `O(V + E)`        | `O(V²)`             |
 | Voisins d'un sommet | `O(degré)`        | `O(V)`              |
 | Test d'arête `u–v`  | `O(degré)`        | `O(1)`              |
-| Graphe creux        | ✅ idéal           | ❌ gaspillage        |
-| Graphe dense        | correct           | ✅                   |
+| Graphe creux        | ✅ idéal          | ❌ gaspillage       |
+| Graphe dense        | correct           | ✅                  |
 
 > [!important] Choix du projet
 > Les graphes routiers sont **creux** (peu d'arêtes par nœud) et **orientés** (sens uniques) → on utilise une **liste d'adjacence**.
@@ -171,15 +172,15 @@ void dfs(const Graph *graph, int current, int *visited) {
 
 ## 6. Plus court chemin
 
-| Algo | Contexte | Complexité |
-|---|---|---|
-| **BFS** | non pondéré (nb d'arêtes) | `O(V + E)` |
-| **Dijkstra** | poids ≥ 0 | `O((V+E) log V)` (tas binaire) |
-| **Bellman-Ford** | poids négatifs | `O(V·E)` |
-| **A\*** | avec heuristique | dépend de `h` |
+| Algo             | Contexte                  | Complexité                     |
+| ---------------- | ------------------------- | ------------------------------ |
+| **BFS**          | non pondéré (nb d'arêtes) | `O(V + E)`                     |
+| **Dijkstra**     | poids ≥ 0                 | `O((V+E) log V)` (tas binaire) |
+| **Bellman-Ford** | poids négatifs            | `O(V·E)`                       |
+| **A\***          | avec heuristique          | dépend de `h`                  |
 
 > [!note] Lien avec le projet
-> Dijkstra et A\* sont les algorithmes du projet logistique. Voir `etudes/djikstra.md` et `etudes/a_star.md`.
+> Dijkstra et A\* sont les algorithmes du projet logistique. Voir `etudes/dijkstra.md` et `etudes/a_star.md`.
 
 ### Dijkstra — intuition
 
@@ -195,20 +196,21 @@ On reconstruit ensuite le chemin en remontant `previous`.
 
 ## 7. Complexité
 
-| Opération | Liste d'adjacence |
-|---|---|
-| Ajouter une arête | `O(1)` (en tête) |
-| Parcourir les voisins de `u` | `O(degré(u))` |
-| BFS / DFS | `O(V + E)` |
-| Dijkstra (tas binaire) | `O((V+E) log V)` |
-| Dijkstra (scan linéaire) | `O(V²)` |
-| Mémoire | `O(V + E)` |
+| Opération                    | Liste d'adjacence |
+| ---------------------------- | ----------------- |
+| Ajouter une arête            | `O(1)` (en tête)  |
+| Parcourir les voisins de `u` | `O(degré(u))`     |
+| BFS / DFS                    | `O(V + E)`        |
+| Dijkstra (tas binaire)       | `O((V+E) log V)`  |
+| Dijkstra (scan linéaire)     | `O(V²)`           |
+| Mémoire                      | `O(V + E)`        |
 
 ---
 
 ## 8. Cas d'usage
 
 > [!example] Cas d'usage (graphes)
+>
 > - **GPS / routage** : plus court chemin (Dijkstra, A\*).
 > - **Réseaux sociaux** : amis, recommandations, influence.
 > - **Web** : crawl, PageRank (graphe de liens).
@@ -221,9 +223,9 @@ On reconstruit ensuite le chemin en remontant `previous`.
 
 ## 9. Implémentation C du projet
 
-| Fichier | Rôle |
-|---|---|
-| `src/graph.h` | structs `Edge` / `Graph` + prototypes documentés |
+| Fichier       | Rôle                                                          |
+| ------------- | ------------------------------------------------------------- |
+| `src/graph.h` | structs `Edge` / `Graph` + prototypes documentés              |
 | `src/graph.c` | `graph_new`, `graph_add_edge`, `graph_load_csv`, `graph_free` |
 
 ### Cycle de vie
