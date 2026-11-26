@@ -67,6 +67,22 @@ make clean  # nettoie les artefacts
 docker compose run --rm dev ./build/lro path data/toy/toy1.csv 0 4
 ```
 
+## Données de Lyon
+
+Les graphes sont déjà dans `data/osm/lyon_<R>/` (R = 500, 1000, 2000, 4000 m autour de Bellecour). Ne pas les régénérer après le gel du code : la numérotation des nœuds changerait.
+
+```sh
+docker compose run --rm dev python scripts/osm_to_csv.py              # les 4 tailles
+docker compose run --rm dev python scripts/osm_to_csv.py --radius 500 # une seule
+```
+
+| R | Nœuds | Rues | Arêtes orientées |
+|---|---|---|---|
+| 500 m | 154 | 224 | 448 |
+| 1000 m | 550 | 850 | 1 700 |
+| 2000 m | 1 886 | 3 021 | 6 042 |
+| 4000 m | 5 344 | 8 128 | 16 256 |
+
 ## État d'avancement
 
 - [x] Notes de lecture : Dijkstra, A\*, Contraction Hierarchies
