@@ -22,12 +22,14 @@ On récupère le vrai réseau routier de Lyon avec un script Python, et le C ne 
 - Graphe non orienté : chaque rue est ajoutée dans les deux sens.
 - Tailles utilisées pour les mesures :
 
-| Demi-côté R | Nœuds | Arêtes |
-|---|---|---|
-| 500 m | `À MESURER` | `À MESURER` |
-| 1000 m | `À MESURER` | `À MESURER` |
-| 2000 m | `À MESURER` | `À MESURER` |
-| 4000 m | `À MESURER` | `À MESURER` |
+| Demi-côté R | Nœuds | Rues | Arêtes orientées (2 × rues) |
+|---|---|---|---|
+| 500 m | 154 | 224 | 448 |
+| 1000 m | 550 | 850 | 1 700 |
+| 2000 m | 1 886 | 3 021 | 6 042 |
+| 4000 m | 5 344 | 8 128 | 16 256 |
+
+Source : `data/osm/lyon_<R>/meta.txt`, extraction du 26 novembre 2026, OSMnx 2.2.0 (PR #18).
 
 ## Texte oral
 
@@ -37,8 +39,9 @@ On récupère le vrai réseau routier de Lyon avec un script Python, et le C ne 
 
 ## À préparer
 
-- Capture du réseau tracé par OSMnx (`ox.plot_graph`) pour R = 2000 m.
-- Remplir le tableau des tailles à partir de `meta.txt`.
+- [x] Capture du réseau pour R = 2000 m : `slides/img/lyon_2000.png` (branche `presentation`). Aussi `lyon_500.png` et `lyon_4000.png`.
+- [x] Tableau des tailles rempli à partir de `meta.txt`.
+- Si on demande « pourquoi si peu de nœuds à 500 m ? » : le réseau « drive » exclut les rues piétonnes, nombreuses autour de Bellecour et de la Presqu'île.
 
 ## À vérifier
 
