@@ -93,7 +93,7 @@ Louisan Tchitoula · Sofia <span class="todo">NOM</span> · Faustine <span class
 - `nodes.csv`, `edges.csv`, `meta.txt`, en pleine précision
 
 </div>
-<div class="ph">Carte du réseau, R = 2000 m<br>(slides/img/lyon_2000.png, #12)</div>
+<div><img src="img/lyon_2000.png" alt="Réseau routier de Lyon, R = 2000 m" style="max-height:440px"><div class="note">Lyon, R = 2000 m : 1 886 carrefours, 3 021 rues</div></div>
 </div>
 
 <!-- Partie 2 : presentation/02_donnees_osm.md -->
@@ -103,15 +103,15 @@ Louisan Tchitoula · Sofia <span class="todo">NOM</span> · Faustine <span class
 # Le graphe en C
 
 - Liste d'adjacence : 2 à 3 rues par intersection
-- Une matrice V × V de `double` pour 10 000 nœuds : 800 Mo
+- Pour nos 5 344 nœuds : matrice V × V de `double` = 228 Mo, liste d'adjacence < 1 Mo
 - Graphe non orienté : chaque rue dans les deux sens
 
-| Demi-côté R | Nœuds | Arêtes |
+| Demi-côté R | Nœuds | Rues |
 |---|---|---|
-| 500 m | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
-| 1000 m | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
-| 2000 m | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
-| 4000 m | <span class="todo">À MESURER</span> | <span class="todo">À MESURER</span> |
+| 500 m | 154 | 224 |
+| 1000 m | 550 | 850 |
+| 2000 m | 1 886 | 3 021 |
+| 4000 m | 5 344 | 8 128 |
 
 ---
 
