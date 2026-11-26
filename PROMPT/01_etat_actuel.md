@@ -6,7 +6,7 @@ Mis à jour le 26 novembre 2026. En cas de doute, vérifier `git log` et `TASKS.
 
 | Branche | Contenu |
 |---|---|
-| `main` | plan, notes de lecture, Docker et CI (PR #2), phase 1 (PR #15 et #16), phase 3 : données de Lyon (PR #18), coordonnées des nœuds (PR #19) |
+| `main` | plan, notes de lecture, Docker et CI (PR #2), phase 1 (PR #15 et #16), phase 3 : données de Lyon (PR #18), coordonnées des nœuds (PR #19), phase 4 : matrice de distances (PR #22) |
 | `3-phase-2-a-avec-heuristique-haversine` | phase 2, A\* : il ne reste que le commit d'A\* (les coordonnées sont sur `main` via #19) ; PR à ouvrir, reste `--astar` dans `lro path` |
 | `documentation` | vault Obsidian : plan, tâches, base de la soutenance |
 | `presentation` | diapos Marp |
@@ -22,14 +22,14 @@ Mis à jour le 26 novembre 2026. En cas de doute, vérifier `git log` et `TASKS.
 ## Ce qui manque
 
 - Retouches de la phase 1 relevées en review : #17.
-- Phases 4 à 8 : rien de codé.
+- Phases 5 à 8 : rien de codé.
 - Note de lecture Clarke & Wright.
 
 ## Ordre de merge
 
 1. Phase 3 (#18) : mergée.
 2. Phase 2 (#3) : après avoir mergé `main` dans sa branche, ajoute le test A\* contre Dijkstra sur Lyon. Inclure le point 1 de #17 (lecture des arguments de `lro path`), qui touche le même code.
-3. Phase 4 (#5) : peut partir de `main` dès maintenant (`graph_load_nodes_csv` y est depuis #19). Elle touchera `main.c` et le `Makefile` comme la phase 2 : merger `main` dans sa branche avant sa PR.
+3. Phase 4 (#5) : mergée (PR #22). La phase 2 a maintenant un conflit à régler dans le `Makefile` (ligne `TEST_BINS` : garder les deux tests).
 
 ## Prochaine étape
 
