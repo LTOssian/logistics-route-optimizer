@@ -325,7 +325,218 @@ if length < floor:
 
 ### Phase 4 — Matrice de distances (#5)
 
-*À remplir.* À couvrir : un Dijkstra par point, l'arrêt quand tous les points sont extraits, la taille (N+1) × (N+1), le stockage en tableau à une dimension.
+
+# Phase 4 — Matrice de distances
+
+1. En une phrase
+
+On choisit un **dépôt** (carrefour le plus proche de Bellecour) et **N clients** tirés au hasard (graine 42), puis on calcule la **distance routière réelle** entre chaque paire de points avec Dijkstra. Le résultat est rangé dans une matrice `(N+1) × (N+1)` qu'on peut enregistrer et relire en CSV.
+
+2. Pourquoi une matrice ?
+
+Le TSP et le CVRP ne raisonnent pas sur la carte. Ils ont seulement besoin de savoir « combien de mètres entre le point i et le point j ». Ces algorithmes demandent cette distance des milliers de fois. On la calcule donc **une seule fois** avec Dijkstra, puis chaque lecture coûte `O(1)`.
+
+```
+carte de Lyon (graphe)
+   ├─ nearest_node()  → dépôt (nœud le plus proche de Bellecour)
+   ├─ pick_points()   → [dépôt, client1, ..., clientN]
+   ▼
+distance_matrix_compute()  → d[i][j] en mètres
+   ▼
+TSP / CVRP (phases 5 et 6) : ne lisent plus que la matrice
+```
+
+Convention : **le dépôt est toujours à l'indice 0**, les clients aux indices `1..N`.
+
+---
+3. Fichiers modifiés et ajoutés
+
+|Fichier|Statut|Contenu|
+|---|---|---|
+|`src/dijkstra.h` / `src/dijkstra.c`|modifié|ajout de `dijkstra_multi()`|
+|`src/distance_matrix.h` / `src/distance_matrix.c`|**nouveau**|structure `DistanceMatrix`, calcul, accès, CSV, libération|
+|`src/points.h` / `src/points.c`|**nouveau**|choix du dépôt et tirage des clients|
+|`tests/test_distance_matrix.c`|**nouveau**|34 checks|
+|`tests/test_points.c`|**nouveau**|15 checks|
+|`Makefile`|modifié|compilation et lancement des 2 nouveaux tests|
+
+`points` s'appuie sur les coordonnées ajoutées dans `graph` avec la fonction `graph_load_nodes_csv()`, champs `graph->lat` et `graph->lon`
+
+---
+
+4. Les fonctions, une par une
+
+4.1 `dijkstra_multi()` — `src/dijkstra.c`
+
+```c
+DijkstraResult *dijkstra_multi(const Graph *graph, int source,
+                               const int *targets, int target_count);
+```
+
+**Rôle :** un Dijkstra depuis `source` qui **s'arrête dès que toutes les cibles sont sorties du tas**, au lieu d'explorer toute la ville.
+
+**Comment :** c'est le Dijkstra existant (tas binaire + lazy deletion), avec un seul ajout :
+
+- un tableau `is_target[]` marque les cibles ;
+- un compteur `remaining` contient le nombre de cibles **distinctes**, une cible en double n'étant comptée qu'une fois ;
+- chaque fois qu'une cible est **extraite** du tas, on décrémente `remaining`. À 0, on s'arrête (`break`).
+
+**Pourquoi s'arrêter à l'extraction et pas quand une cible est atteinte ?** Quand on atteint un nœud pour la première fois, sa distance est **provisoire** : un autre chemin peut encore l'améliorer. Elle ne devient **définitive** qu'au moment où le nœud sort du tas. S'arrêter plus tôt pourrait donner une distance fausse. C'est la même règle que `dijkstra_query()`, appliquée à plusieurs cibles.
+
+**Gain mesuré :** sur `lyon_4000` (5 344 nœuds), avec 5 cibles, on ferme 4 598 nœuds au lieu de 5 344. Le gain grandit quand les points sont proches entre eux ou peu nombreux.
+
+**Complexité :** `O((V + E) log V)` dans le pire cas, comme Dijkstra. En pratique, c'est moins grâce à l'arrêt anticipé.
+
+**Cas particuliers :** une cible inatteignable garde la distance `INFINITY`. Des paramètres invalides donnent `NULL`.
+
+---
+
+4.2 `DistanceMatrix` — `src/distance_matrix.h`
+
+```c
+typedef struct DistanceMatrix {
+  int size;     // N + 1 (dépôt + clients)
+  int *nodes;   // nodes[i] = id du nœud du graphe ; nodes[0] = dépôt
+  double *data; // size * size distances, ligne par ligne
+} DistanceMatrix;
+```
+
+**Pourquoi un tableau à plat plutôt qu'un `double**` ?** On n'a qu'un seul `malloc` et un seul `free`, et les données sont contiguës en mémoire. La case `d[i][j]` se trouve à `data[i * size + j]` :
+
+```
+data = [ d00 d01 d02 | d10 d11 d12 | d20 d21 d22 ]
+          ligne 0       ligne 1       ligne 2
+```
+
+**Pourquoi une matrice dense ?** Avec N entre 100 et 1 000, la matrice pèse au plus `1000² × 8 octets ≈ 8 Mo`, ce qui est raisonnable et très simple. C'est le choix noté dans le `PLAN.md`.
+
+---
+
+4.3 `distance_matrix_compute()`
+
+```c
+DistanceMatrix *distance_matrix_compute(const Graph *graph, const int *nodes, int size);
+```
+
+**Rôle :** remplir la matrice. **Une ligne = un `dijkstra_multi`** lancé depuis le point `i`, avec tous les points comme cibles. On recopie ensuite `distances[nodes[j]]` dans `d[i][j]`.
+
+**Pourquoi depuis chaque point et pas seulement depuis le dépôt ?** Le TSP et le VRP ont besoin des distances **entre clients**, pas seulement dépôt → client.
+
+**Complexité :** `size` Dijkstra, soit `O(N · (V + E) log V)`.
+
+**Choix de conception :** la fonction reçoit la **liste des points** au lieu de la tirer elle-même. On peut donc la tester avec des points choisis à la main, et la réutiliser avec n'importe quelle liste.
+
+---
+
+4.4 `distance_matrix_get()` et `distance_matrix_free()`
+
+- `get(m, i, j)` renvoie `d[i][j]`, ou `NAN` si `i` ou `j` sont hors bornes. On évite ainsi de lire n'importe où en mémoire.
+- `free(m)` libère la structure et ses deux tableaux. Elle accepte `NULL`.
+
+---
+
+4.5 `distance_matrix_save_csv()` et `distance_matrix_load_csv()`
+
+**Rôle :** enregistrer une matrice dans un fichier, puis la relire. L'issue le demande pour **pouvoir tester le TSP et le CVRP sans recharger les données OSM**.
+
+**Format :**
+
+```
+size,4
+nodes,12,124,59,86
+0,993.28141895571821,513.48191737238733,561.25702557107206
+993.2814189557181,0,1370.5171598902029,432.02439338464615
+513.48191737238733,1370.5171598902027,0,938.49276650555692
+561.25702557107206,432.0243933846462,938.49276650555714,0
+```
+
+(vrai export : `lyon_500`, dépôt + 3 clients, graine 42)
+
+- **Pourquoi `%.17g` ?** 17 chiffres significatifs suffisent pour qu'à la relecture on retrouve **exactement** le même `double`. Le test le vérifie avec une égalité stricte.
+- **Point inatteignable :** il est écrit `inf` et relu comme `INFINITY`.
+- **Fichier mal formé :** en-tête absent, ligne manquante, valeur en trop ou texte au lieu d'un nombre donnent `NULL`, sans fuite mémoire.
+
+---
+
+4.6 `nearest_node()` — `src/points.c`
+
+```c
+int nearest_node(const Graph *graph, double lat, double lon);
+```
+
+**Rôle :** choisir le **dépôt**, c'est-à-dire le nœud du graphe le plus proche du centre (Bellecour : 45.7578, 4.832).
+
+**Pourquoi le nœud le plus proche ?** Un point GPS n'est pas forcément sur une route. On prend donc le carrefour le plus proche. Un dépôt au centre donne des tournées équilibrées dans toutes les directions.
+
+**Calcul :** on compare `dlat² + (dlon · cos(lat))²`.
+
+- `cos(lat)` corrige le fait qu'à Lyon un degré de longitude (≈ 78 km) est plus court qu'un degré de latitude (≈ 111 km).
+- On garde le carré, sans racine, parce qu'on compare seulement des distances entre elles.
+- À l'échelle d'une ville, cette approximation plane suffit, pas besoin de Haversine.
+
+**Résultat :** le dépôt est **le même carrefour sur les 4 cartes** (45.758396, 4.832482), avec un id différent selon le fichier : nœud 12 dans `lyon_500`, nœud 285 dans `lyon_4000`. On peut donc comparer les résultats entre tailles de graphe.
+
+**Complexité :** `O(V)`, un seul parcours des nœuds. Sans coordonnées chargées, la fonction renvoie `-1`.
+
+---
+
+4.7 `pick_points()` — `src/points.c`
+
+```c
+int *pick_points(int node_count, int depot, int client_count, uint64_t seed);
+```
+
+**Rôle :** produire la liste `[dépôt, client1, …, clientN]`, avec des clients tirés au hasard parmi les autres nœuds.
+
+**Garanties :**
+
+- **aucun doublon** et **le dépôt n'est jamais un client**. Un tableau `taken[]` marque les nœuds déjà pris, et un nœud déjà pris est simplement retiré ;
+- `N` doit vérifier `1 ≤ N ≤ node_count − 1`, sinon la fonction renvoie `NULL`. Sans cette vérification, la boucle de tirage ne s'arrêterait jamais.
+
+**Pourquoi une graine fixe (42) ?** Le générateur `rng` (xorshift64) n'est pas vraiment aléatoire : une même graine donne **toujours la même suite**. Tout le monde obtient donc les mêmes clients, et les résultats et benchmarks sont **reproductibles**. C'est une décision du `PLAN.md`. On n'utilise pas `rand()`, dont le résultat dépend de la plateforme.
+
+**Complexité :** environ `O(N)` en moyenne quand `N ≪ V`. Les tirages rejetés deviennent fréquents seulement si on prend presque tous les nœuds.
+
+---
+
+5. Tests — comment on sait que c'est juste
+
+`make test` lance les deux nouveaux tests. La CI les passe aussi sous **valgrind**, qui ne signale aucune fuite mémoire.
+
+| Critère de l'issue                               | Test                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------- |
+| Matrice `(N+1)×(N+1)`, dépôt à l'indice 0        | `test_shape`                                                              |
+| Diagonale nulle                                  | `test_diagonal`                                                           |
+| Symétrie (à une tolérance relative près)         | `test_symmetry` (graphe non orienté, tolérance `1e-9`)                    |
+| Inégalité triangulaire                           | `test_triangle` : `d[i][k] ≤ d[i][j] + d[j][k]` pour tout i, j, k         |
+| Cohérence avec des Dijkstra isolés               | `test_matches_dijkstra` : chaque case = Dijkstra complet                  |
+| Arrêt quand toutes les cibles sont **extraites** | `test_early_stop` : moins de nœuds fermés, mêmes distances                |
+| Export / import CSV                              | `test_csv` : aller-retour exact, `inf`, 5 fichiers invalides              |
+| Tirage graine 42, sans doublon                   | `test_pick` : dépôt en case 0, pas de doublon, même graine = mêmes points |
+| Dépôt = nœud le plus proche du centre            | `test_nearest`                                                            |
+
+**Pourquoi une tolérance pour la symétrie ?** Les deux sens d'une rue ont le même poids, mais Dijkstra additionne les distances dans un ordre différent selon le sens, et les arrondis des `double` peuvent différer au dernier chiffre. Exemple réel : `d[0][1] = 993.28141895571821` et `d[1][0] = 993.2814189557181`.
+
+**Pourquoi la symétrie est testée sur `lyon_500` et pas sur `toy1` ?** `toy1.csv` est **orienté** (pas d'arête 1→0), donc sa matrice n'est pas symétrique.
+
+---
+
+6. Questions probables à l'oral
+
+**Q : Pourquoi N Dijkstra et pas un algorithme many-to-many ?** C'est simple et correct, avec une complexité `O(N · (V+E) log V)`. Le many-to-many avancé (par exemple avec les Contraction Hierarchies) est un bonus hors périmètre, comme décidé dans le `PLAN.md`.
+
+**Q : Qu'est-ce que la lazy deletion ?** Quand la distance d'un nœud s'améliore, on insère une nouvelle entrée dans le tas au lieu de modifier l'ancienne. À l'extraction, on ignore les entrées d'un nœud déjà fermé. C'est plus simple qu'un `decrease-key`.
+
+**Q : Que se passe-t-il si un client est inatteignable ?** Sa distance reste `INFINITY` dans la matrice, et elle est écrite `inf` dans le CSV. Les graphes de Lyon ne gardent que la plus grande composante connexe, donc ça n'arrive pas en pratique.
+
+**Q : Combien de mémoire prend la matrice ?** `(N+1)² × 8 octets`, soit environ 80 Ko pour 100 clients et environ 8 Mo pour 1 000.
+
+**Q : Pourquoi la matrice n'est-elle pas exactement symétrique ?** À cause des arrondis des nombres à virgule (voir la section 5). L'écart est de l'ordre de `1e-13` mètre.
+
+**Q : Pourquoi le dépôt est-il à l'indice 0 ?** C'est une convention : le TSP et le CVRP savent toujours où est l'entrepôt sans avoir à le chercher.
+
+**Q : Pourquoi une graine fixe ?** Pour la reproductibilité. Tout le monde, sur n'importe quelle machine, obtient les mêmes clients, donc les mêmes résultats à comparer.
+
 
 ### Phase 5 — TSP (#6)
 
