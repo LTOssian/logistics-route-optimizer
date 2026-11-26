@@ -69,13 +69,32 @@ make clean  # nettoie les artefacts
 docker compose run --rm dev ./build/lro path data/toy/toy1.csv 0 4
 ```
 
+## Données de Lyon
+
+Les graphes sont déjà dans `data/osm/lyon_<R>/` : carrés de demi-côté R = 500, 1000, 2000 et 4000 m autour de Bellecour, réseau « drive ». Le graphe est non orienté : les sens uniques sont ignorés. Chaque dossier contient `edges.csv`, `nodes.csv` et `meta.txt` (paramètres, tailles, corrections appliquées).
+
+Ces données sont **gelées** : tout le monde travaille sur les mêmes nœuds. Sans le cache local, Overpass renvoie la carte OSM du jour, donc une régénération peut donner d'autres nœuds et une autre numérotation. Le script refuse d'écraser un dossier existant sans `--force`.
+
+```sh
+docker compose run --rm dev python scripts/osm_to_csv.py --out /tmp/osm               # essai, sans toucher aux données
+docker compose run --rm dev python scripts/osm_to_csv.py --radius 500 --force         # écrase lyon_500
+docker compose run --rm dev python scripts/osm_to_csv.py --overpass-url <miroir>/api  # si overpass-api.de sature
+```
+
+| R | Nœuds | Rues | Arêtes orientées |
+|---|---|---|---|
+| 500 m | 154 | 224 | 448 |
+| 1000 m | 550 | 850 | 1 700 |
+| 2000 m | 1 886 | 3 021 | 6 042 |
+| 4000 m | 5 344 | 8 128 | 16 256 |
+
 ## État d'avancement
 
 - [x] Notes de lecture : Dijkstra, A\*, Contraction Hierarchies
 - [x] Décisions techniques et plan validés
 - [x] Phase 1 — Dijkstra sur graphe jouet
 - [ ] Phase 2 — A\*
-- [ ] Phase 3 — pipeline OSM
+- [x] Phase 3 — pipeline OSM
 - [ ] Phase 4 — matrice de distances
 - [ ] Phase 5 — TSP
 - [ ] Phase 6 — CVRP
