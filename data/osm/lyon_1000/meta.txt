@@ -1,0 +1,15 @@
+extracted_at=2026-11-26T12:15:35Z
+osmnx_version=2.2.0
+center_lat=45.7578
+center_lon=4.832
+half_side_m=1000
+zone=carre (dist_type=bbox)
+network_type=drive
+nodes=550
+edges_lines=1700
+streets=850
+osm_edges=850
+self_loops_removed=0
+parallel_merged=0
+weights_raised_to_haversine=34
+max_raise_m=4.848601520279772e-10
