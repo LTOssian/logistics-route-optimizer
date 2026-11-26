@@ -34,6 +34,8 @@ typedef struct Graph {
   int node_count;      /**< nombre de nœuds. */
   int edge_count;      /**< nombre d'arêtes. */
   Edge **adjacency;    /**< adjacency[index] = tête des arêtes sortant de index. */
+  double *lat;         /**< latitudes en degrés, ou NULL si pas de coordonnées. */
+  double *lon;         /**< longitudes en degrés, ou NULL si pas de coordonnées. */
 } Graph;
 
 /**
@@ -83,6 +85,30 @@ int graph_add_edge(Graph *graph, int from, int to, double weight);
  * @note À libérer avec graph_free().
  */
 Graph *graph_load_csv(const char *path);
+
+/**
+ * @brief Renseigne les coordonnées d'un nœud (allocation au premier appel).
+ *
+ * Les nœuds non renseignés valent NAN tant qu'on ne les a pas fixés.
+ *
+ * @param node nœud (0 <= node < graph->node_count).
+ * @param lat latitude en degrés, dans [-90, 90].
+ * @param lon longitude en degrés, dans [-180, 180].
+ * @return 1 en cas de succès, 0 si un paramètre est invalide ou si
+ *         l'allocation échoue.
+ */
+int graph_set_coords(Graph *graph, int node, double lat, double lon);
+
+/**
+ * @brief Charge les coordonnées depuis un CSV `id,lat,lon`.
+ *
+ * Les lignes non numériques (en-tête, commentaires) sont ignorées. Tous les
+ * nœuds du graphe doivent apparaître exactement une fois. En cas d'échec, le
+ * graphe est laissé inchangé.
+ *
+ * @return 1 en cas de succès, 0 sinon.
+ */
+int graph_load_nodes_csv(Graph *graph, const char *path);
 
 /**
  * @brief Libère le graphe et toutes ses arêtes.
