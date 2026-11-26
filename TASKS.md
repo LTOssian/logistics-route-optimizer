@@ -10,7 +10,7 @@ Pour prendre une tâche : s'assigner sur l'issue GitHub correspondante.
 - [ ] Se répartir les issues (chacun s'assigne)
 - [ ] Tout le monde : `docker compose build` puis `docker compose run --rm dev make test` sur la branche de la phase 1
 - [x] Phase 1 : renommage `dijkstra`, tas binaire, Dijkstra V2, oracle, CLI `path` (#1, PR #16)
-- [ ] Phase 3 : `scripts/osm_to_csv.py`, graphes Lyon R = 500 à 4000 m, les 4 jeux committés (#4) — fait, PR #18 à relire et merger
+- [x] Phase 3 : `scripts/osm_to_csv.py`, graphes Lyon R = 500 à 4000 m, les 4 jeux committés (#4, PR #18)
 - [ ] Phase 5 : NN + 2-opt + Held-Karp sur matrices jouets (#6)
 
 ## Jeu. 26 – ven. 27 nov.
