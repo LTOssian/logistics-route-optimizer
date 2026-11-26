@@ -22,7 +22,7 @@ Dijkstra donne le plus court chemin exact quand les poids sont positifs. La stru
 | V1 | parcours du tableau | `O(V²)` |
 | V2 | tas binaire, lazy deletion | `O((V + E) log V)` |
 
-- Graphe routier creux : E ≈ 2 à 3 × V, donc V2 gagne largement quand V grandit.
+- Graphe routier creux : E ≈ 3 × V arêtes orientées (chaque nœud a environ 3 voisins ; à 4000 m, 16 256 arêtes pour 5 344 nœuds), donc V2 gagne largement quand V grandit.
 - Lazy deletion : on ne met pas à jour une clé dans le tas, on réinsère et on ignore les entrées périmées au pop.
 - Courbe V1 vs V2 en fonction de V : `À MESURER` (benchmark B1).
 - Correction : graphe jouet du CLRS aux distances connues, oracle exhaustif sur ≤ 8 nœuds, cas limites (inatteignable, source invalide, source = cible). Ne garder sur la diapo que ce qui est réellement testé le jour J.

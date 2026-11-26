@@ -144,6 +144,11 @@ Projet d'implémentation et de comparaison d'algorithmes de graphes appliqués �
 | Poids | distance / temps | distance | cohérent avec l'heuristique |
 | Versionnement des données | tout committer / tout ignorer | committer les 4 jeux exportés (`data/osm/lyon_<R>/`) avec leur `meta.txt` ; ignorer le brut et le cache ; ne plus régénérer après le gel du code | une nouvelle extraction change la numérotation des nœuds : la démo et les chiffres des diapos ne correspondraient plus |
 | Reproductibilité | non documenté / documenter | date d'extraction + version OSMnx | les données OSM changent dans le temps |
+| Boucles et rues parallèles | garder / simplifier | boucles retirées ; entre deux carrefours, seule la rue la plus courte est gardée | ne change aucun plus court chemin, et chaque paire n'apparaît qu'une fois |
+| Poids sous le vol d'oiseau | laisser / remonter | poids ≥ Haversine + 1e-9 m ; arrêt si la remontée dépasse 1e-6 m | le C et Python n'arrondissent pas Haversine pareil (écart de 3e-14 m) : la marge garantit l'admissibilité dans les deux ; au-delà de 1e-6 m, c'est une erreur de données, pas un arrondi |
+| Numérotation | ordre de parcours / tri des ids OSM | tri des identifiants OSM | ne dépend pas de l'ordre interne de networkx |
+| Protection des données | aucune / refus | le script refuse d'écraser un dossier sans `--force`, et télécharge tout avant d'écrire | une régénération accidentelle changerait la numérotation, et une panne d'Overpass au milieu mélangerait deux extractions |
+| Serveur Overpass | principal / miroir | principal, `--overpass-url` en secours ; le serveur utilisé est noté dans `meta.txt` | overpass-api.de sature souvent, et coupe la connexion depuis certains réseaux d'entreprise |
 
 **Validation :** nombre de nœuds/arêtes identique entre Python et C ; distances plausibles ; garder la plus grande composante connexe.
 
