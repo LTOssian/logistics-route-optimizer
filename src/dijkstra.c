@@ -201,3 +201,88 @@ void dijkstra_result_free(DijkstraResult *result) {
   free(result->previous);
   free(result);
 }
+
+DijkstraResult *dijkstra_multi(const Graph *graph, int source,
+                               const int *targets, int target_count) {
+  if (graph == NULL || targets == NULL || target_count < 1)
+    return NULL;
+  if (source < 0 || source >= graph->node_count)
+    return NULL;
+  for (int i = 0; i < target_count; i++) {
+    if (targets[i] < 0 || targets[i] >= graph->node_count)
+      return NULL;
+  }
+
+  size_t count = (size_t)graph->node_count;
+  DijkstraResult *result = malloc(sizeof(DijkstraResult));
+  if (result == NULL)
+    return NULL;
+
+  result->node_count = graph->node_count;
+  result->settled_count = 0;
+  result->distances = malloc(sizeof(double) * count);
+  result->previous = malloc(sizeof(int) * count);
+  int *closed = calloc(count, sizeof(int));
+  int *is_target = calloc(count, sizeof(int));
+  MinHeap *heap = heap_new(graph->node_count);
+  HeapItem item;
+
+  if (result->distances == NULL || result->previous == NULL ||
+      closed == NULL || is_target == NULL || heap == NULL) {
+    goto fail;
+  }
+
+  int remaining = 0;
+  for (int i = 0; i < target_count; i++) {
+    if (!is_target[targets[i]]) {
+      is_target[targets[i]] = 1;
+      remaining++;
+    }
+  }
+
+  for (int index = 0; index < graph->node_count; index++) {
+    result->distances[index] = INFINITY;
+    result->previous[index] = -1;
+  }
+  result->distances[source] = 0.0;
+
+  if (!heap_push(heap, 0.0, source))
+    goto fail;
+
+  while (heap_pop(heap, &item)) {
+    int current = item.node;
+    if (closed[current])
+      continue;
+    closed[current] = 1;
+    result->settled_count++;
+
+    if (is_target[current]) {
+      remaining--;
+      if (remaining == 0)
+        break;
+    }
+
+    for (Edge *edge = graph->adjacency[current]; edge != NULL;
+         edge = edge->next) {
+      double candidate = result->distances[current] + edge->weight;
+      if (candidate < result->distances[edge->to]) {
+        result->distances[edge->to] = candidate;
+        result->previous[edge->to] = current;
+        if (!heap_push(heap, candidate, edge->to))
+          goto fail;
+      }
+    }
+  }
+
+  free(closed);
+  free(is_target);
+  heap_free(heap);
+  return result;
+
+fail:
+  free(closed);
+  free(is_target);
+  heap_free(heap);
+  dijkstra_result_free(result);
+  return NULL;
+}
