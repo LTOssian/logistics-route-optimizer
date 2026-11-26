@@ -12,7 +12,7 @@ Les termes utilisés dans la présentation et les diapos, dans l'ordre où ils a
 
 **Graphe orienté / non orienté** : dans un graphe orienté, une arête a un sens (A → B ne veut pas dire B → A), ce qui permet de modéliser les sens uniques. Dans un graphe non orienté, on peut parcourir chaque rue dans les deux sens. On a choisi le non orienté pour simplifier.
 
-**Graphe creux** : un graphe qui a peu d'arêtes par rapport au maximum possible. Un réseau routier en est un, avec 2 à 3 rues par intersection.
+**Graphe creux** : un graphe qui a peu d'arêtes par rapport au maximum possible. Un réseau routier en est un, avec environ 3 rues par nœud.
 
 **Liste d'adjacence** : pour chaque nœud, on stocke la liste de ses voisins directs. Ça prend une mémoire proportionnelle à V + E, ce qui convient aux graphes creux.
 
@@ -25,6 +25,16 @@ Les termes utilisés dans la présentation et les diapos, dans l'ordre où ils a
 **OSMnx** : une bibliothèque Python qui télécharge le réseau routier OSM d'une zone et le transforme en graphe.
 
 **Identifiants denses** : des numéros de nœuds qui se suivent, de 0 à n−1. Les identifiants OSM sont grands et irréguliers, donc on les renumérote pour pouvoir utiliser `dist[i]` comme un simple tableau.
+
+**Overpass** : le serveur qui répond aux requêtes sur les données OpenStreetMap. OSMnx l'interroge pour télécharger une zone.
+
+**Réseau « drive »** : la partie du réseau OSM ouverte aux voitures. Elle exclut les rues piétonnes, les pistes cyclables et les chemins.
+
+**Boucle** : une arête qui part d'un nœud et y revient (un rond-point en impasse, par exemple). Elle ne raccourcit jamais un chemin, on la retire.
+
+**Arêtes parallèles** : plusieurs rues qui relient les deux mêmes carrefours. Pour un plus court chemin, seule la plus courte compte.
+
+**Données gelées** : des données qu'on ne régénère plus, pour que tout le monde travaille sur les mêmes nœuds et que les chiffres des diapos restent vrais.
 
 **CSV** : un fichier texte avec une valeur par colonne, séparées par des virgules. C'est le format d'échange entre le script Python et le programme C.
 

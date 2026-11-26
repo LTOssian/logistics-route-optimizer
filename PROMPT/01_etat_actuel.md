@@ -7,6 +7,8 @@ Mis à jour le 26 novembre 2026. En cas de doute, vérifier `git log` et `TASKS.
 | Branche | Contenu |
 |---|---|
 | `main` | plan, notes de lecture, Docker et CI (PR #2), phase 1 complète (PR #15 et #16) |
+| `3-phase-2-a-avec-heuristique-haversine` | phase 2, A\* : code et tests faits, PR à ouvrir (reste `--astar` dans `lro path`) |
+| `4-phase-3-pipeline-osm-lyon` | phase 3, données de Lyon : PR #18 à relire et merger |
 | `documentation` | vault Obsidian : plan, tâches, base de la soutenance |
 | `presentation` | diapos Marp |
 
@@ -20,8 +22,14 @@ Mis à jour le 26 novembre 2026. En cas de doute, vérifier `git log` et `TASKS.
 ## Ce qui manque
 
 - Retouches de la phase 1 relevées en review : #17.
-- Phases 2 à 8 : rien de codé.
+- Phases 4 à 8 : rien de codé.
 - Note de lecture Clarke & Wright.
+
+## Ordre de merge
+
+1. Phase 3 (#18) : ne touche aucun fichier C, met les données de Lyon sur `main`.
+2. Phase 2 (#3) : après avoir mergé `main` dans sa branche, ajoute le test A\* contre Dijkstra sur Lyon. Inclure le point 1 de #17 (lecture des arguments de `lro path`), qui touche le même code.
+3. Phase 4 (#5) : part de `main` après la phase 2, qui modifie aussi `main.c` et le `Makefile`.
 
 ## Prochaine étape
 
