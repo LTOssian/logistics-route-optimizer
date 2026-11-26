@@ -105,7 +105,7 @@ id,lat,lon
 data/osm/lyon_<R>/
 ├── edges.csv
 ├── nodes.csv
-└── meta.txt     # date d'extraction, version d'OSMnx, R, n, m
+└── meta.txt     # clé=valeur : run_at, osmnx_version, R, n, m, streets, corrections appliquées
 ```
 R = 500, 1000, 2000, 4000.
 

@@ -96,7 +96,7 @@ Comment `graph_load_csv` reconnaît les lignes : `sscanf(line, "%d,%d,%lf", ...)
 
 ### Choix à justifier
 
-- **Liste d'adjacence plutôt que matrice** : un carrefour a 2 à 3 rues. Une matrice V × V de `double` pour 10 000 nœuds prend 800 Mo, presque entièrement remplis d'« infini ».
+- **Liste d'adjacence plutôt que matrice** : un nœud a environ 3 rues. Pour nos 5 344 nœuds, une matrice V × V de `double` prendrait 228 Mo, presque entièrement remplis d'« infini », contre moins de 1 Mo en liste d'adjacence.
 - **Liste chaînée plutôt que tableau d'arêtes trié (CSR)** : plus simple à écrire et à expliquer, ajout en `O(1)`. Le CSR serait plus rapide (mémoire contiguë), c'est une optimisation possible, pas nécessaire à notre taille.
 - **Arêtes orientées dans la structure, graphe non orienté dans les faits** : on stocke chaque rue deux fois (`u → v` et `v → u`). La même structure permettrait les sens uniques plus tard. (Le commentaire de `graph.h` dit « orienté », à préciser : #17.)
 - **Insertion en tête** : les voisins sont parcourus dans l'ordre inverse du fichier. Ça ne change pas les distances, mais si deux chemins ont la même longueur, c'est cet ordre qui décide lequel est renvoyé.
@@ -279,9 +279,49 @@ Pour chaque phase : fichiers, fonction clé avec un extrait court, choix à just
 
 *À remplir.* À couvrir au minimum : `graph_load_nodes_csv` et les coordonnées dans `Graph`, la formule de Haversine et le rayon de 6 371 009 m, la clé du tas `f = g + h`, l'arrêt au pop de la cible, l'absence de réouverture, les graphes de test admissibles par construction.
 
-### Phase 3 — Données OSM (#4)
+### Phase 3 — Données OSM (#4, PR #18)
 
-*À remplir.* À couvrir : `scripts/osm_to_csv.py` étape par étape (téléchargement, plus grande composante, `to_undirected`, renumérotation), le format des fichiers, l'export en pleine précision, ce que contient `meta.txt`.
+**Fichiers** : `scripts/osm_to_csv.py` (Python, environ 200 lignes), `data/osm/lyon_<R>/{edges.csv, nodes.csv, meta.txt}`.
+
+**Le trajet** (`main`) :
+
+1. Refus si un dossier `lyon_<R>` existe déjà, sauf `--force` : les données sont gelées.
+2. `download(R)` pour **chaque** taille avant d'écrire quoi que ce soit. Si Overpass plante au milieu, aucun fichier n'a bougé.
+3. `build_tables(graph)` transforme le graphe OSMnx en tableaux.
+4. `write_files` écrit les trois fichiers, puis `check` les relit.
+
+**`download`** : `ox.graph_from_point((45.7578, 4.8320), dist=R, network_type="drive")`. Deux valeurs par défaut font le travail : `dist_type="bbox"` découpe un **carré** de demi-côté R (pas un disque), et `retain_all=False` ne garde que la plus grande composante connexe. Puis `ox.convert.to_undirected` fusionne les deux sens de chaque rue.
+
+**`build_tables`**, le cœur :
+
+```python
+osm_ids = sorted(graph.nodes)                       # numérotation stable
+index = {osm_id: i for i, osm_id in enumerate(osm_ids)}
+...
+floor = haversine_m(*coords[a], *coords[b]) + MARGIN_M
+if length < floor:
+    if floor - length > MAX_RAISE_M:                # 1e-6 m
+        raise ExportError(...)                      # vraie erreur de données
+    streets[(a, b)] = floor                         # simple arrondi : on remonte
+```
+
+- **Renumérotation** : les identifiants OSM sont de grands nombres irréguliers. On les trie et on les numérote de 0 à n−1, ce qui permet au C d'utiliser des tableaux `dist[i]`. Le tri rend le résultat indépendant de l'ordre interne de networkx.
+- **Boucles retirées, rues parallèles fusionnées** (on garde la plus courte) : aucun plus court chemin ne change, et chaque paire n'apparaît qu'une fois. À 4000 m : 13 boucles, 70 rues parallèles.
+- **Poids ≥ vol d'oiseau + 1e-9 m** : c'est la condition pour qu'A\* reste optimal. OSMnx calcule les longueurs avec la même formule, mais pas exactement les mêmes arrondis : à 4000 m, 420 rues sur 8 128 étaient sous le vol d'oiseau, d'au plus 6e-10 m ; avec la marge, 849 sont remontées, de 1,6e-9 m au plus. La marge de 1e-9 m couvre aussi l'écart entre notre Python et notre C (3e-14 m). Au-delà de 1e-6 m, ce n'est plus un arrondi : le script s'arrête.
+
+**`haversine_m`** est écrit dans le même ordre d'opérations que la version C (`degrés * π / 180`, `s * s`), pour réduire l'écart entre les deux langages.
+
+**`write_files`** : `repr(x)` écrit chaque flottant avec assez de chiffres pour être relu exactement, d'où la « pleine précision ». `meta.txt` contient l'heure d'exécution, la version d'OSMnx, le serveur Overpass, R, n, m et le détail des corrections.
+
+**`check`** relit les fichiers écrits : `n` lignes dans `nodes.csv` avec des ids 0, 1, 2…, un en-tête `n,m` égal au contenu, et un graphe connexe reconstruit depuis `edges.csv` relu. Les erreurs passent par une exception, pas par `assert`, qui serait désactivé par `python -O`.
+
+**Vérifié avec le C** (code de la phase 2) : les 4 graphes se chargent, 0 arête sous le Haversine du C, 0 violation de consistance `h(u) ≤ w(u,v) + h(v)` sur 50 cibles par graphe, et A\* donne les mêmes distances que Dijkstra sur 1 000 paires par graphe.
+
+**Points faibles connus**
+- Pas de test automatique du script : `check` en tient lieu. Un test C sur `lyon_500` dans `make test` arrive avec la phase 2.
+- Les sens uniques sont ignorés (choix du plan) : une vraie camionnette ferait parfois des détours.
+- Sans le cache local, une régénération télécharge la carte OSM du jour : nœuds et numérotation peuvent changer. C'est pour ça que les jeux sont committés et gelés.
+- `run_at` est l'heure d'exécution du script, pas la date de la base OSM.
 
 ### Phase 4 — Matrice de distances (#5)
 

@@ -18,7 +18,7 @@ On récupère le vrai réseau routier de Lyon avec un script Python, et le C ne 
 **Diapo 4 — Le graphe en C**
 
 - Liste d'adjacence : chaque nœud a la liste de ses arêtes sortantes.
-- Pourquoi pas une matrice V × V : un graphe routier est creux (2 à 3 rues par intersection). Pour 10 000 nœuds, une matrice de `double` prendrait 800 Mo.
+- Pourquoi pas une matrice V × V : un graphe routier est creux (environ 3 rues par nœud : 2,9 à 3,2 selon la taille). Pour nos 5 344 nœuds, une matrice de `double` prendrait 228 Mo, contre moins de 1 Mo en liste d'adjacence.
 - Graphe non orienté : chaque rue est ajoutée dans les deux sens.
 - Tailles utilisées pour les mesures :
 
@@ -45,9 +45,10 @@ Source : `data/osm/lyon_<R>/meta.txt`, extraction du 26 novembre 2026, OSMnx 2.2
 
 ## À vérifier
 
-- La date d'extraction et la version d'OSMnx sont écrites dans `meta.txt` : les données OSM changent avec le temps.
-- Le nombre de nœuds et d'arêtes lu par le C est identique à celui de Python.
-- Les poids et les coordonnées sont exportés en pleine précision, sans arrondi.
+- [x] La date d'extraction et la version d'OSMnx sont écrites dans `meta.txt` : les données OSM changent avec le temps.
+- [x] Le nombre de nœuds et d'arêtes lu par le C est identique à celui de Python.
+- [x] Les poids et les coordonnées sont exportés en pleine précision, sans arrondi.
+- [x] Avec le Haversine du C, aucune arête n'est plus courte que le vol d'oiseau (PR #18).
 
 ## Transition
 

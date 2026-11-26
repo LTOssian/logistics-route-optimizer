@@ -19,6 +19,23 @@ La longueur d'une rue est calculée le long de sa géométrie sur la sphère. El
 **A\* est-il toujours plus rapide ?**
 Non. Au pire cas, il explore autant que Dijkstra, par exemple si `h = 0` ou si le graphe force de grands détours. Il calcule aussi Haversine à chaque nœud, ce qui coûte.
 
+## Données
+
+**Pourquoi avez-vous modifié des longueurs de rues ?**
+Pour garantir qu'A\* reste optimal, il faut que chaque rue soit au moins aussi longue que le vol d'oiseau. OSMnx calcule les longueurs avec la même formule que nous, mais les arrondis diffèrent : quelques rues tombaient sous le vol d'oiseau d'environ 1e-10 m. On les remonte au vol d'oiseau plus 1e-9 m, soit un millionième de millimètre. Au-delà de 1e-6 m, le script considère que c'est une erreur de données et s'arrête.
+
+**Pourquoi si peu de nœuds (154 à 500 m) ?**
+On prend le réseau « drive », ouvert aux voitures. Autour de Bellecour et sur la Presqu'île, beaucoup de rues sont piétonnes. Et OSMnx fusionne les points intermédiaires d'une rue : un nœud est un carrefour ou une impasse.
+
+**Pourquoi un carré et pas un disque ?**
+C'est la zone par défaut d'OSMnx (`dist_type="bbox"`), et ça ne change rien pour nous : on veut juste faire varier la taille avec un seul paramètre.
+
+**Les sens uniques ?**
+Ignorés : notre graphe est non orienté. C'était un choix pour simplifier (matrice symétrique, 2-opt classique). La structure C est orientée, donc il suffirait d'exporter chaque sens séparément.
+
+**Si on relance votre script demain, on obtient la même chose ?**
+Pas forcément : OpenStreetMap change tous les jours. C'est pour ça que les 4 jeux sont committés et gelés, avec la date et la version d'OSMnx dans `meta.txt`, et que le script refuse de les écraser sans `--force`.
+
 ## Tournées
 
 **Pourquoi des heuristiques ?**
