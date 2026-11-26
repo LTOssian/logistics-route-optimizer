@@ -14,6 +14,8 @@
 7. `07_agent_instructions.md` — le prompt système à donner à l'agent.
 8. `../presentation/glossaire.md` — définitions des termes du projet.
 
+À part : `08_tuteur.md`, prompt d'une session de quiz pour réviser le projet (à lancer dans une nouvelle session).
+
 ## Règle d'or
 
 - Le code est en **C** (C11). Les algorithmes vont dans `src/`, les tests dans `tests/`, les données dans `data/`.
