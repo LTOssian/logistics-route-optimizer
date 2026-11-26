@@ -18,7 +18,7 @@ Pour prendre une tâche : s'assigner sur l'issue GitHub correspondante.
 Ordre de merge : **phase 3 (#18), puis phase 2 (#3), puis phase 4 (#5)**. Détail dans `PROMPT/01_etat_actuel.md`.
 
 - [ ] Phase 2 : A\* + Haversine (#3) — code et tests faits ; reste `--astar`, la PR, puis le test sur Lyon une fois #18 mergée
-- [ ] Phase 4 : matrice de distances (#5)
+- [ ] Phase 4 : matrice de distances (#5) — peut commencer, les coordonnées sont sur `main` (PR #19)
 - [ ] Phase 6 : Clarke & Wright + Or-opt sur matrices jouets (#7)
 - [ ] Note de lecture Clarke & Wright (#10)
 - [ ] Phase 7 : script de benchmarks et protocole, `benchmarks/ENV.md` (#8)
