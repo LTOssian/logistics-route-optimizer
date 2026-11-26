@@ -1,5 +1,6 @@
 #include "graph.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -19,6 +20,10 @@ Graph *graph_new(int node_count) {
 
   graph->node_count = node_count;
   graph->edge_count = 0;
+
+  graph->lat = NULL;
+  graph->lon = NULL;
+
   return graph;
 }
 
@@ -56,6 +61,11 @@ void graph_free(Graph *graph) {
       edge = next_edge;
     }
   }
+
+
+  free(graph->lat);
+  free(graph->lon);
+
   free(graph->adjacency);
   free(graph);
 }
@@ -127,4 +137,95 @@ Graph *graph_load_csv(const char *path) {
   }
 
   return graph;
+}
+
+int graph_set_coords(Graph *graph, int node, double lat, double lon) {
+  if (graph == NULL)
+    return 0;
+  if (node < 0 || node >= graph->node_count)
+    return 0;
+  if (lat < -90.0 || lat > 90.0 || lon < -180.0 || lon > 180.0)
+    return 0;
+
+  if (graph->lat == NULL || graph->lon == NULL) {
+    size_t count = (size_t)graph->node_count;
+    double *new_lat = malloc(sizeof(double) * count);
+    double *new_lon = malloc(sizeof(double) * count);
+    if (new_lat == NULL || new_lon == NULL) {
+      free(new_lat);
+      free(new_lon);
+      return 0;
+    }
+    for (size_t index = 0; index < count; index++) {
+      new_lat[index] = NAN;
+      new_lon[index] = NAN;
+    }
+    free(graph->lat); /* au cas où un seul des deux serait alloué */
+    free(graph->lon);
+    graph->lat = new_lat;
+    graph->lon = new_lon;
+  }
+
+  graph->lat[node] = lat;
+  graph->lon[node] = lon;
+  return 1;
+}
+
+int graph_load_nodes_csv(Graph *graph, const char *path) {
+  if (graph == NULL || path == NULL)
+    return 0;
+
+  FILE *file = fopen(path, "r");
+  if (file == NULL)
+    return 0;
+
+  size_t count = (size_t)graph->node_count;
+  double *lat = malloc(sizeof(double) * count);
+  double *lon = malloc(sizeof(double) * count);
+  int *seen = calloc(count, sizeof(int));
+  if (lat == NULL || lon == NULL || seen == NULL) {
+    free(lat);
+    free(lon);
+    free(seen);
+    fclose(file);
+    return 0;
+  }
+
+  char line[1024];
+  int loaded = 0;
+  int valid = 1;
+
+  while (fgets(line, sizeof line, file) != NULL) {
+    int id;
+    double node_lat;
+    double node_lon;
+
+    /* en-tête, commentaires, lignes vides : ignorés */
+    if (sscanf(line, "%d,%lf,%lf", &id, &node_lat, &node_lon) != 3)
+      continue;
+
+    if (id < 0 || id >= graph->node_count || seen[id] || node_lat < -90.0 ||
+        node_lat > 90.0 || node_lon < -180.0 || node_lon > 180.0) {
+      valid = 0;
+      break;
+    }
+    lat[id] = node_lat;
+    lon[id] = node_lon;
+    seen[id] = 1;
+    loaded++;
+  }
+  fclose(file);
+  free(seen);
+
+  if (!valid || loaded != graph->node_count) {
+    free(lat);
+    free(lon);
+    return 0;
+  }
+
+  free(graph->lat);
+  free(graph->lon);
+  graph->lat = lat;
+  graph->lon = lon;
+  return 1;
 }
