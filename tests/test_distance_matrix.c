@@ -28,6 +28,14 @@ static int nearly_equal(double a, double b) {
   return fabs(a - b) <= 1e-9 * scale;
 }
 
+static void write_file(const char *path, const char *content) {
+  FILE *file = fopen(path, "w");
+  if (file != NULL) {
+    fputs(content, file);
+    fclose(file);
+  }
+}
+
 static const int POINTS[] = {10, 3, 77, 120, 5, 42, 99, 150};
 static const int POINT_COUNT = (int)(sizeof POINTS / sizeof POINTS[0]);
 
@@ -46,6 +54,15 @@ static void test_shape(const DistanceMatrix *m) {
     if (m->nodes[i] != POINTS[i])
       same_nodes = 0;
   expect_true("nodes recopies dans l'ordre", same_nodes);
+}
+
+/* Vérifie qu'une case hors de la matrice renvoie NAN au lieu de lire
+ * n'importe où en mémoire. */
+static void test_get_bounds(const DistanceMatrix *m) {
+  printf("test_get_bounds\n");
+  expect_true("get hors bornes -> NAN",
+              isnan(distance_matrix_get(m, m->size, 0)) &&
+                  isnan(distance_matrix_get(m, 0, -1)));
 }
 
 /* Vérifie que la distance d'un point à lui-même vaut 0 (la diagonale). */
@@ -151,8 +168,64 @@ static void test_early_stop(void) {
   graph_free(graph);
 }
 
-/* Vérifie que les mauvais paramètres renvoient NULL ou NAN proprement au lieu de faire planter
- * le programme. */
+/* Vérifie l'export puis le réimport CSV : on doit retrouver EXACTEMENT la
+ * même matrice. Les fichiers mal formés doivent être refusés. */
+static void test_csv(const DistanceMatrix *m) {
+  printf("test_csv\n");
+  const char *path = "build/test_matrix.csv";
+
+  expect_true("save_csv reussi", distance_matrix_save_csv(m, path));
+  DistanceMatrix *loaded = distance_matrix_load_csv(path);
+  expect_true("load_csv non NULL", loaded != NULL);
+
+  if (loaded != NULL) {
+    expect_true("meme taille", loaded->size == m->size);
+    int same = (loaded->size == m->size);
+    for (int i = 0; same && i < m->size; i++) {
+      if (loaded->nodes[i] != m->nodes[i])
+        same = 0;
+      for (int j = 0; j < m->size; j++)
+        if (distance_matrix_get(loaded, i, j) != distance_matrix_get(m, i, j))
+          same = 0;
+    }
+    expect_true("memes noeuds et memes distances (egalite exacte)", same);
+    distance_matrix_free(loaded);
+  }
+
+  /* Un point inatteignable (INFINITY) doit survivre à l'aller-retour. */
+  write_file(path, "size,2\nnodes,4,9\n0,inf\ninf,0\n");
+  DistanceMatrix *with_inf = distance_matrix_load_csv(path);
+  expect_true("inf relu comme INFINITY",
+              with_inf != NULL && isinf(distance_matrix_get(with_inf, 0, 1)));
+  distance_matrix_free(with_inf);
+
+  /* Fichiers invalides : tous doivent donner NULL, sans fuite mémoire. */
+  expect_true("fichier absent -> NULL",
+              distance_matrix_load_csv("absent.csv") == NULL);
+  expect_true("chemin NULL -> NULL", distance_matrix_load_csv(NULL) == NULL);
+  expect_true("save sur matrice NULL -> 0",
+              distance_matrix_save_csv(NULL, path) == 0);
+
+  write_file(path, "taille,2\nnodes,4,9\n0,1\n1,0\n");
+  expect_true("en-tete size absent -> NULL",
+              distance_matrix_load_csv(path) == NULL);
+  write_file(path, "size,2\nnoeuds,4,9\n0,1\n1,0\n");
+  expect_true("ligne nodes absente -> NULL",
+              distance_matrix_load_csv(path) == NULL);
+  write_file(path, "size,3\nnodes,4,9,1\n0,1,2\n1,0,3\n");
+  expect_true("ligne manquante -> NULL",
+              distance_matrix_load_csv(path) == NULL);
+  write_file(path, "size,2\nnodes,4,9\n0,1,7\n1,0\n");
+  expect_true("valeur en trop -> NULL",
+              distance_matrix_load_csv(path) == NULL);
+  write_file(path, "size,2\nnodes,4,9\n0,abc\n1,0\n");
+  expect_true("valeur non numerique -> NULL",
+              distance_matrix_load_csv(path) == NULL);
+
+  remove(path);
+}
+
+/* Vérifie que les mauvais paramètres renvoient NULL ou NAN proprement au lieu de faire planter le programme. */
 static void test_invalid(const Graph *graph) {
   printf("test_invalid\n");
   int bad_node[] = {0, 9999};
@@ -184,18 +257,13 @@ int main(void) {
   }
 
   test_shape(m);
-
-  
-  printf("test_get_bounds\n");
-  expect_true("get hors bornes -> NAN",
-              isnan(distance_matrix_get(m, m->size, 0)) &&
-                  isnan(distance_matrix_get(m, 0, -1)));
-
+  test_get_bounds(m);
   test_diagonal(m);
   test_symmetry(m);
   test_triangle(m);
   test_matches_dijkstra(graph, m);
   test_early_stop();
+  test_csv(m);
   test_invalid(graph);
 
   distance_matrix_free(m);

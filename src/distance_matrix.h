@@ -51,6 +51,38 @@ DistanceMatrix *distance_matrix_compute(const Graph *graph, const int *nodes,
 double distance_matrix_get(const DistanceMatrix *matrix, int i, int j);
 
 /**
+ * @brief Écrit la matrice dans un fichier CSV.
+ *
+ * Format (une ligne d'en-tête, la liste des nœuds, puis une ligne par point) :
+ * @code
+ * size,3
+ * nodes,12,124,59
+ * 0,304.25,865.6
+ * 304.25,0,1169.9
+ * 865.6,1169.9,0
+ * @endcode
+ * Les nombres sont écrits avec 17 chiffres significatifs : à la relecture,
+ * on retrouve exactement les mêmes doubles. Un point inatteignable est
+ * écrit `inf`.
+ *
+ * @param matrix la matrice à écrire.
+ * @param path chemin du fichier (écrasé s'il existe).
+ * @return 1 en cas de succès, 0 en cas d'erreur.
+ */
+int distance_matrix_save_csv(const DistanceMatrix *matrix, const char *path);
+
+/**
+ * @brief Relit une matrice écrite par distance_matrix_save_csv().
+ *
+ * Permet de tester le TSP et le CVRP sans recharger les données OSM.
+ *
+ * @param path chemin du fichier.
+ * @return la matrice, ou NULL si le fichier est introuvable ou mal formé.
+ * @note À libérer avec distance_matrix_free().
+ */
+DistanceMatrix *distance_matrix_load_csv(const char *path);
+
+/**
  * @brief Libère une matrice.
  *
  * @param matrix matrice à libérer (NULL accepté).
