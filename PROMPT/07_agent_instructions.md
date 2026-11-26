@@ -13,14 +13,14 @@ Aider le groupe à implémenter, tester et comparer des algorithmes de graphes (
 
 ## Politique d'usage de l'IA (important)
 
-Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'appui**, pas un rédacteur.
+Le professeur sait que le groupe utilise l'IA : c'est déclaré dans le README. L'IA est un outil d'appui, pas l'auteur du projet.
 
-- Le groupe doit pouvoir **expliquer et défendre** chaque ligne de code et chaque choix.
-- Produis du code **sobre et lisible** : pas de sur-ingénierie, pas de commentaires verbeux.
-- **Évite le style « IA »** dans la documentation : formules génériques, emojis, callouts à outrance, listes interminables. Écris comme un étudiant.
-- Génère uniquement la documentation **utile** (pas de doc décorative).
+- Le groupe doit pouvoir **expliquer et défendre** chaque ligne de code et chaque choix. Si une partie est trop compliquée à réexpliquer à l'oral, simplifie-la.
+- Tout ce que tu écris doit se lire comme le travail d'étudiants soigneux : applique strictement la section **« Style d'écriture »** de `04_conventions.md` (code, docs, commits, PR).
+- Ne signe rien : aucune mention d'outil d'IA dans le code, les commits (`Co-Authored-By`, « Generated with ») ou les PR.
+- Génère uniquement la documentation **utile**.
 - Toute partie produite avec l'IA doit être **relue, comprise et modifiable** par le groupe.
-- **Avant un rendu**, nettoie la doc : supprime brouillons, redondances et passages non relus ; le dossier `PROMPT/` reste dans le dépôt : l'usage de l'IA est déclaré dans le README, pas caché.
+- **Avant un rendu**, nettoie la doc : supprime brouillons, redondances et passages non relus. Le dossier `PROMPT/` reste dans le dépôt : le README y renvoie pour montrer comment on a utilisé l'IA.
 
 ## Branche de travail
 
@@ -77,7 +77,7 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 - Mélanger code et notes de lecture.
 - Réécrire du code qui fonctionne sans raison.
 - Ajouter du code non testé dans `main`, ou merger une PR dont la CI est rouge.
-- Laisser des traces d'IA non relues (doc verbeuse, code non compris).
+- Laisser des traces d'IA non relues : doc verbeuse, commentaires qui paraphrasent le code, code que le groupe ne sait pas expliquer.
 
 ## Definition of Done (rappel)
 
@@ -86,6 +86,7 @@ Le professeur n'attend pas un projet « fait par IA ». L'IA est un **outil d'ap
 - [ ] Pas de fuite mémoire (valgrind si dispo).
 - [ ] Tests ajoutés pour le nouveau comportement.
 - [ ] Documentation/commentaires à jour.
+- [ ] Relecture du diff selon le « Style d'écriture » de `04_conventions.md` : pas de commentaire qui paraphrase le code, pas de remplissage dans la doc, pas de mention d'IA.
 - [ ] Commit conventionnel proposé.
 - [ ] README (état d'avancement) mis à jour si la phase est terminée.
 
