@@ -3,6 +3,15 @@
 #include "graph.h"
 
 /**
+ * @brief Taille maximale (dépôt + clients) acceptée par
+ *        distance_matrix_load_csv().
+ *
+ * Protège contre un fichier qui annoncerait une taille énorme : 10000 points
+ * donnent 10^8 doubles, soit environ 800 Mo.
+ */
+#define DISTANCE_MATRIX_MAX_SIZE 10000
+
+/**
  * @file distance_matrix.h
  * @brief Matrice des plus courtes distances entre un dépôt et des clients.
  *
@@ -35,6 +44,9 @@ typedef struct DistanceMatrix {
  * @param size nombre de points (size >= 1).
  * @return la matrice allouée, ou NULL si un paramètre est invalide ou si
  *         une allocation échoue. Un point inatteignable donne INFINITY.
+ *         La matrice est rendue exactement symétrique : pour i < j,
+ *         d[i][j] = d[j][i] = min des deux valeurs calculées (les deux
+ *         Dijkstra peuvent différer d'environ 1e-9 par arrondi).
  * @note À libérer avec distance_matrix_free().
  */
 DistanceMatrix *distance_matrix_compute(const Graph *graph, const int *nodes,
@@ -77,7 +89,8 @@ int distance_matrix_save_csv(const DistanceMatrix *matrix, const char *path);
  * Permet de tester le TSP et le CVRP sans recharger les données OSM.
  *
  * @param path chemin du fichier.
- * @return la matrice, ou NULL si le fichier est introuvable ou mal formé.
+ * @return la matrice, ou NULL si le fichier est introuvable, mal formé, ou
+ *         si sa taille dépasse DISTANCE_MATRIX_MAX_SIZE.
  * @note À libérer avec distance_matrix_free().
  */
 DistanceMatrix *distance_matrix_load_csv(const char *path);

@@ -7,11 +7,13 @@
  * @file dijkstra.h
  * @brief Plus courts chemins depuis une source (algorithme de Dijkstra).
  *
- * Trois variantes :
+ * Quatre variantes :
  *  - dijkstra_naive() : scan linéaire, O(V^2) (référence pour le benchmark) ;
  *  - dijkstra()       : tas binaire + lazy deletion, O((V + E) log V) ;
  *  - dijkstra_query() : comme dijkstra(), mais s'arrête quand la cible est
- *                       extraite du tas.
+ *                       extraite du tas ;
+ *  - dijkstra_multi() : comme dijkstra(), mais s'arrête quand toutes les
+ *                       cibles ont été extraites du tas.
  */
 
 /**

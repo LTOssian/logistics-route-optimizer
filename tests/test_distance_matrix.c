@@ -82,10 +82,9 @@ static void test_symmetry(const DistanceMatrix *m) {
   int ok = 1;
   for (int i = 0; i < m->size; i++)
     for (int j = 0; j < m->size; j++)
-      if (!nearly_equal(distance_matrix_get(m, i, j),
-                        distance_matrix_get(m, j, i)))
+      if (distance_matrix_get(m, i, j) != distance_matrix_get(m, j, i))
         ok = 0;
-  expect_true("d[i][j] == d[j][i] (tolerance relative 1e-9)", ok);
+  expect_true("d[i][j] == d[j][i] (egalite exacte)", ok);
 }
 
 /* Vérifie l'inégalité triangulaire : faire un détour par un point j n'est
@@ -217,6 +216,9 @@ static void test_csv(const DistanceMatrix *m) {
               distance_matrix_load_csv(path) == NULL);
   write_file(path, "size,2\nnodes,4,9\n0,1,7\n1,0\n");
   expect_true("valeur en trop -> NULL",
+              distance_matrix_load_csv(path) == NULL);
+  write_file(path, "size,10001\nnodes,4,9\n0,1\n1,0\n");
+  expect_true("size > DISTANCE_MATRIX_MAX_SIZE -> NULL",
               distance_matrix_load_csv(path) == NULL);
   write_file(path, "size,2\nnodes,4,9\n0,abc\n1,0\n");
   expect_true("valeur non numerique -> NULL",

@@ -41,6 +41,16 @@ DistanceMatrix *distance_matrix_compute(const Graph *graph, const int *nodes,
 
     dijkstra_result_free(result);
   }
+  
+  for (int i = 0; i < size; i++) {
+    for (int j = i + 1; j < size; j++) {
+      double a = matrix->data[i * size + j];
+      double b = matrix->data[j * size + i];
+      double d = (a < b) ? a : b;
+      matrix->data[i * size + j] = d;
+      matrix->data[j * size + i] = d;
+    }
+  }
 
   return matrix;
 }
@@ -102,7 +112,8 @@ DistanceMatrix *distance_matrix_load_csv(const char *path) {
 
   // L1 : "size,N".
   int size;
-  if (fscanf(file, " size,%d", &size) != 1 || size < 1) {
+  if (fscanf(file, " size,%d", &size) != 1 || size < 1 ||
+      size > DISTANCE_MATRIX_MAX_SIZE) {
     fclose(file);
     return NULL;
   }
