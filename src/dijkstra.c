@@ -1,5 +1,7 @@
 #include "dijkstra.h"
+
 #include "heap.h"
+
 #include <math.h>
 #include <stdlib.h>
 
@@ -78,17 +80,13 @@ DijkstraResult *dijkstra_naive(const Graph *graph, int source) {
  * target >= 0 : on s'arrête quand target sort du tas.
  */
 static DijkstraResult *dijkstra_run(const Graph *graph, int source,
-                                    const int *targets, int target_count) {
+                                    int target) {
   if (graph == NULL)
     return NULL;
   if (source < 0 || source >= graph->node_count)
     return NULL;
-  if (target_count < 0 || (target_count > 0 && targets == NULL))
+  if (target < -1 || target >= graph->node_count)
     return NULL;
-  for (int i = 0; i < target_count; i++) {
-    if (targets[i] < 0 || targets[i] >= graph->node_count)
-      return NULL;
-  }
 
   DijkstraResult *result = malloc(sizeof(DijkstraResult));
   if (result == NULL)
@@ -100,23 +98,12 @@ static DijkstraResult *dijkstra_run(const Graph *graph, int source,
   result->distances = malloc(sizeof(double) * count);
   result->previous = malloc(sizeof(int) * count);
   int *closed = calloc(count, sizeof(int));
-  int *is_target = (target_count > 0) ? calloc(count, sizeof(int)) : NULL;
   MinHeap *heap = heap_new(graph->node_count);
   HeapItem item;
 
   if (result->distances == NULL || result->previous == NULL ||
-      closed == NULL || heap == NULL ||
-      (target_count > 0 && is_target == NULL)) {
+      closed == NULL || heap == NULL) {
     goto fail;
-  }
-
-  // Cibles distinctes restantes (une cible donnée deux fois compte une fois).
-  int remaining = 0;
-  for (int i = 0; i < target_count; i++) {
-    if (!is_target[targets[i]]) {
-      is_target[targets[i]] = 1;
-      remaining++;
-    }
   }
 
   for (int index = 0; index < graph->node_count; index++) {
@@ -138,8 +125,8 @@ static DijkstraResult *dijkstra_run(const Graph *graph, int source,
     closed[current] = 1;
     result->settled_count++;
 
-    // Arrêt au POP de la dernière cible : sa distance est alors définitive.
-    if (is_target != NULL && is_target[current] && --remaining == 0)
+    // Arrêt au POP de la cible : sa distance est alors définitive.
+    if (current == target)
       break;
 
     for (Edge *edge = graph->adjacency[current]; edge != NULL;
@@ -155,31 +142,24 @@ static DijkstraResult *dijkstra_run(const Graph *graph, int source,
   }
 
   free(closed);
-  free(is_target);
   heap_free(heap);
   return result;
 
 fail:
   free(closed);
-  free(is_target);
   heap_free(heap);
   dijkstra_result_free(result); // free(NULL) est sans danger
   return NULL;
 }
 
 DijkstraResult *dijkstra(const Graph *graph, int source) {
-  return dijkstra_run(graph, source, NULL, 0);
+  return dijkstra_run(graph, source, -1);
 }
 
 DijkstraResult *dijkstra_query(const Graph *graph, int source, int target) {
-  return dijkstra_run(graph, source, &target, 1);
-}
-
-DijkstraResult *dijkstra_multi(const Graph *graph, int source,
-                               const int *targets, int target_count) {
-  if (targets == NULL || target_count < 1)
+  if (target < 0)
     return NULL;
-  return dijkstra_run(graph, source, targets, target_count);
+  return dijkstra_run(graph, source, target);
 }
 
 int *dijkstra_path(const DijkstraResult *result, int target, int *path_length) {

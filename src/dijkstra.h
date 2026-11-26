@@ -7,13 +7,11 @@
  * @file dijkstra.h
  * @brief Plus courts chemins depuis une source (algorithme de Dijkstra).
  *
- * Quatre variantes :
+ * Trois variantes :
  *  - dijkstra_naive() : scan linéaire, O(V^2) (référence pour le benchmark) ;
  *  - dijkstra()       : tas binaire + lazy deletion, O((V + E) log V) ;
  *  - dijkstra_query() : comme dijkstra(), mais s'arrête quand la cible est
- *                       extraite du tas ;
- *  - dijkstra_multi() : comme dijkstra(), mais s'arrête quand toutes les
- *                       cibles ont été extraites du tas.
+ *                       extraite du tas.
  */
 
 /**
@@ -97,21 +95,5 @@ int *dijkstra_path(const DijkstraResult *result, int target, int *path_length);
  * @param result résultat à libérer (NULL accepté).
  */
 void dijkstra_result_free(DijkstraResult *result);
-
-/**
- * @brief Plus courts chemins depuis `source`, arrêt quand toutes les cibles
- *        sont extraites du tas.
- *
- * Seules les distances vers les nœuds de `targets` sont garanties définitives.
- *
- * @param graph graphe pondéré (poids >= 0).
- * @param source nœud de départ.
- * @param targets tableau de `target_count` nœuds cibles.
- * @param target_count nombre de cibles (>= 1).
- * @return le résultat alloué, ou NULL en cas d'erreur.
- * @note À libérer avec dijkstra_result_free().
- */
-DijkstraResult *dijkstra_multi(const Graph *graph, int source,
-                               const int *targets, int target_count);
 
 #endif
