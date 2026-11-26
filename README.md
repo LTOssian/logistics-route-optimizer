@@ -69,11 +69,14 @@ docker compose run --rm dev ./build/lro path data/toy/toy1.csv 0 4
 
 ## Données de Lyon
 
-Les graphes sont déjà dans `data/osm/lyon_<R>/` (R = 500, 1000, 2000, 4000 m autour de Bellecour). Ne pas les régénérer après le gel du code : la numérotation des nœuds changerait.
+Les graphes sont déjà dans `data/osm/lyon_<R>/` : carrés de demi-côté R = 500, 1000, 2000 et 4000 m autour de Bellecour, réseau « drive ». Le graphe est non orienté : les sens uniques sont ignorés. Chaque dossier contient `edges.csv`, `nodes.csv` et `meta.txt` (paramètres, tailles, corrections appliquées).
+
+Ces données sont **gelées** : tout le monde travaille sur les mêmes nœuds. Sans le cache local, Overpass renvoie la carte OSM du jour, donc une régénération peut donner d'autres nœuds et une autre numérotation. Le script refuse d'écraser un dossier existant sans `--force`.
 
 ```sh
-docker compose run --rm dev python scripts/osm_to_csv.py              # les 4 tailles
-docker compose run --rm dev python scripts/osm_to_csv.py --radius 500 # une seule
+docker compose run --rm dev python scripts/osm_to_csv.py --out /tmp/osm               # essai, sans toucher aux données
+docker compose run --rm dev python scripts/osm_to_csv.py --radius 500 --force         # écrase lyon_500
+docker compose run --rm dev python scripts/osm_to_csv.py --overpass-url <miroir>/api  # si overpass-api.de sature
 ```
 
 | R | Nœuds | Rues | Arêtes orientées |
