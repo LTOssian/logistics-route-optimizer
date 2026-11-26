@@ -1,15 +1,17 @@
-extracted_at=2026-11-26T12:18:39Z
+run_at=2026-11-26T12:18:39Z
 osmnx_version=2.2.0
 center_lat=45.7578
 center_lon=4.832
-half_side_m=2000
-zone=carre (dist_type=bbox)
+R=2000
+zone=carre de demi-cote R (dist_type=bbox)
 network_type=drive
-nodes=1886
-edges_lines=6042
+overpass_url=https://overpass-api.de/api
+oriented=non (chaque rue dans les deux sens, sens uniques ignores)
+n=1886
+m=6042
 streets=3021
 osm_edges=3030
 self_loops_removed=0
 parallel_merged=9
-weights_raised_to_haversine=116
-max_raise_m=4.962217303727812e-10
+weights_raised=233
+max_raise_m=1.4962537875362614e-09
