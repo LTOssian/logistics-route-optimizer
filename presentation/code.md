@@ -305,9 +305,9 @@ if length < floor:
     streets[(a, b)] = floor                         # simple arrondi : on remonte
 ```
 
-- **Renumérotation** : les identifiants OSM sont grands et irréguliers (`21 693 841`…). On les trie et on les numérote de 0 à n−1, ce qui permet au C d'utiliser des tableaux `dist[i]`. Le tri rend le résultat indépendant de l'ordre interne de networkx.
+- **Renumérotation** : les identifiants OSM sont de grands nombres irréguliers. On les trie et on les numérote de 0 à n−1, ce qui permet au C d'utiliser des tableaux `dist[i]`. Le tri rend le résultat indépendant de l'ordre interne de networkx.
 - **Boucles retirées, rues parallèles fusionnées** (on garde la plus courte) : aucun plus court chemin ne change, et chaque paire n'apparaît qu'une fois. À 4000 m : 13 boucles, 70 rues parallèles.
-- **Poids ≥ vol d'oiseau + 1e-9 m** : c'est la condition pour qu'A\* reste optimal. OSMnx calcule les longueurs avec la même formule, mais pas exactement les mêmes arrondis : 849 rues sur 8 128 (à 4000 m) étaient sous le vol d'oiseau, d'au plus 6e-10 m. La marge de 1e-9 m couvre aussi l'écart entre notre Python et notre C (3e-14 m). Au-delà de 1e-6 m, ce n'est plus un arrondi : le script s'arrête.
+- **Poids ≥ vol d'oiseau + 1e-9 m** : c'est la condition pour qu'A\* reste optimal. OSMnx calcule les longueurs avec la même formule, mais pas exactement les mêmes arrondis : à 4000 m, 420 rues sur 8 128 étaient sous le vol d'oiseau, d'au plus 6e-10 m ; avec la marge, 849 sont remontées, de 1,6e-9 m au plus. La marge de 1e-9 m couvre aussi l'écart entre notre Python et notre C (3e-14 m). Au-delà de 1e-6 m, ce n'est plus un arrondi : le script s'arrête.
 
 **`haversine_m`** est écrit dans le même ordre d'opérations que la version C (`degrés * π / 180`, `s * s`), pour réduire l'écart entre les deux langages.
 
