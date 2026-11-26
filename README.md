@@ -96,7 +96,7 @@ docker compose run --rm dev python scripts/osm_to_csv.py --overpass-url <miroir>
 - [x] Phase 1 — Dijkstra sur graphe jouet
 - [x] Phase 2 — A\*
 - [x] Phase 3 — pipeline OSM
-- [ ] Phase 4 — matrice de distances
+- [x] Phase 4 — matrice de distances
 - [ ] Phase 5 — TSP
 - [ ] Phase 6 — CVRP
 - [ ] Phase 7 — benchmarks
