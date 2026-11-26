@@ -13,8 +13,9 @@ TEST_HEAP     = $(BUILD)/test_heap
 TEST_RNG      = $(BUILD)/test_rng
 TEST_ORACLE   = $(BUILD)/test_oracle
 TEST_EXPECTED = $(BUILD)/test_expected
-TEST_BINS     = $(TEST_GRAPH) $(TEST_DIJKSTRA) $(TEST_HEAP) $(TEST_RNG) $(TEST_ORACLE) $(TEST_EXPECTED)
-
+TEST_DISTANCE_MATRIX = $(BUILD)/test_distance_matrix
+TEST_POINTS   = $(BUILD)/test_points
+TEST_BINS     = $(TEST_GRAPH) $(TEST_DIJKSTRA) $(TEST_HEAP) $(TEST_RNG) $(TEST_ORACLE) $(TEST_EXPECTED) $(TEST_DISTANCE_MATRIX) $(TEST_POINTS)
 all: $(LRO) $(TEST_BINS)
 
 $(BUILD):
@@ -41,6 +42,12 @@ $(TEST_ORACLE): $(LIB_SRC) src/rng.c tests/test_oracle.c $(LIB_HDR) src/rng.h | 
 $(TEST_EXPECTED): $(LIB_SRC) tests/test_expected.c $(LIB_HDR) | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) tests/test_expected.c $(LDLIBS)
 
+$(TEST_DISTANCE_MATRIX): $(LIB_SRC) src/distance_matrix.c tests/test_distance_matrix.c $(LIB_HDR) src/distance_matrix.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) src/distance_matrix.c tests/test_distance_matrix.c $(LDLIBS)
+
+$(TEST_POINTS): src/graph.c src/points.c src/rng.c tests/test_points.c src/graph.h src/points.h src/rng.h | $(BUILD)
+	$(CC) $(CFLAGS) -Isrc -o $@ src/graph.c src/points.c src/rng.c tests/test_points.c $(LDLIBS)
+
 test: $(LRO) $(TEST_BINS)
 	./$(TEST_GRAPH)
 	./$(TEST_DIJKSTRA)
@@ -48,6 +55,8 @@ test: $(LRO) $(TEST_BINS)
 	./$(TEST_RNG)
 	./$(TEST_ORACLE)
 	./$(TEST_EXPECTED)
+	./$(TEST_DISTANCE_MATRIX)
+	./$(TEST_POINTS)
 	./$(LRO) path data/toy/toy1.csv 0 4 | grep -q "distance = 7.00"
 	@echo "=> test CLI : OK"
 
