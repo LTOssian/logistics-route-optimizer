@@ -178,9 +178,65 @@ static void test_graph_free(void) {
   print_suite_result("test_graph_free");
 }
 
+static void test_graph_coords(void) {
+  printf("test_graph_coords\n");
+
+  /* graph_set_coords */
+  Graph *small = graph_new(2);
+  expect_int("graph_new(2) != NULL", small != NULL, 1);
+  if (small != NULL) {
+    expect_int("pas de coordonnees au depart",
+               small->lat == NULL && small->lon == NULL, 1);
+    expect_int("set_coords valide", graph_set_coords(small, 0, 45.75, 4.85), 1);
+    expect_double("lat[0]", small->lat[0], 45.75);
+    expect_double("lon[0]", small->lon[0], 4.85);
+    expect_int("lat[1] pas encore fixee (NAN)", small->lat[1] != small->lat[1],
+               1);
+    expect_int("noeud hors bornes -> 0", graph_set_coords(small, 2, 0.0, 0.0), 0);
+    expect_int("latitude invalide -> 0",
+               graph_set_coords(small, 0, 91.0, 0.0), 0);
+    expect_int("longitude invalide -> 0",
+               graph_set_coords(small, 0, 0.0, 181.0), 0);
+    expect_int("graphe NULL -> 0", graph_set_coords(NULL, 0, 0.0, 0.0), 0);
+    graph_free(small);
+  }
+
+  /* graph_load_nodes_csv */
+  Graph *graph = graph_load_csv("data/toy/toy1.csv");
+  expect_int("toy1 charge", graph != NULL, 1);
+  if (graph == NULL) {
+    print_suite_result("test_graph_coords");
+    return;
+  }
+
+  expect_int("nodes.csv charge",
+             graph_load_nodes_csv(graph, "data/toy/toy1_nodes.csv"), 1);
+  expect_int("lat/lon allouees", graph->lat != NULL && graph->lon != NULL, 1);
+  if (graph->lat != NULL && graph->lon != NULL) {
+    expect_double("lon[0]", graph->lon[0], -0.0000356);
+    expect_double("lat[3]", graph->lat[3], 0.0);
+
+    expect_int("fichier absent -> 0",
+               graph_load_nodes_csv(graph, "data/toy/nope.csv"), 0);
+    expect_int("noeud manquant -> 0",
+               graph_load_nodes_csv(graph, "tests/fixtures/bad_nodes_missing.csv"),
+               0);
+    expect_int("id hors bornes -> 0",
+               graph_load_nodes_csv(graph, "tests/fixtures/bad_nodes_id.csv"),
+               0);
+    expect_int("chemin NULL -> 0", graph_load_nodes_csv(graph, NULL), 0);
+    expect_double("coordonnees conservees apres echec", graph->lon[0],
+                  -0.0000356);
+  }
+
+  graph_free(graph);
+  print_suite_result("test_graph_coords");
+}
+
 int main(void) {
   test_graph_new();
   test_graph_add_edge();
+  test_graph_coords();
   test_graph_load_csv();
   test_graph_free();
 
