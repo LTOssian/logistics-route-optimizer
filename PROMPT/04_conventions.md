@@ -160,6 +160,37 @@ clean:    # supprime les .o et binaires
 - Toute partie aléatoire (demandes VRP, métaheuristiques) utilise une **graine fixe** documentée.
 - Ne pas dépendre de l'ordre d'itération d'une hash map non triée pour les résultats.
 
+## Style d'écriture
+
+Ces règles valent pour tout le monde, humain ou IA. Le prof sait qu'on utilise l'IA (c'est déclaré dans le README), mais il doit pouvoir lire le dépôt comme un projet d'étudiants : simple, direct, sans remplissage.
+
+### Code
+
+- Un commentaire dit **pourquoi**, jamais ce que fait la ligne. `// relaxe l'arête` au-dessus de `if (candidate < dist[v])` est inutile ; `// lazy deletion : entrée périmée` est utile.
+- Pas de commentaire sur une ligne évidente, pas de commentaire de fin de bloc (`} // fin du for`).
+- Pas de séparateurs décoratifs (`/* -------- */`, `// ====`), pas d'emoji, pas de mots en majuscules pour insister (`POP`, `IMPORTANT`).
+- Doxygen seulement dans les `.h`. Pour chaque fonction publique : `@brief` en une phrase, ce que renvoie la fonction en cas d'erreur, et qui libère la mémoire. `@param` seulement si le nom ne suffit pas.
+- Pas de code « au cas où » : pas de paramètre, d'option ou de fonction générique qui n'a qu'un seul usage.
+- Avant d'écrire une boucle qui ressemble à une boucle existante, étendre l'existante (exemple : `dijkstra_multi` aurait pu réutiliser `dijkstra_run`, review de #20).
+- Messages d'erreur courts et homogènes : `erreur : <ce qui ne va pas>`, en minuscules.
+
+### Documentation, README, rapport, diapos
+
+- Phrases courtes. Une idée par phrase.
+- Pas de phrase d'introduction qui annonce ce qui suit (« Dans cette section, nous allons voir… ») ni de conclusion qui le répète (« En résumé… »).
+- Pas d'emoji. Pas de callout Obsidian (`> [!tip]`) hors du dossier `PROMPT/`.
+- Gras : au plus un terme clé par paragraphe, pas des phrases entières.
+- Pas de listes pour tout : un raisonnement s'écrit en phrases.
+- Mots à éviter : « crucial », « essentiel », « robuste », « puissant », « il est important de noter », « il convient de », « en somme », « permet de » à chaque phrase, « plongeons », « n'hésitez pas ».
+- Rapport : « nous ». Oral et notes de présentation : « on ».
+- Aucun chiffre qui ne sort pas d'une mesure (`benchmarks/results/`, `meta.txt`, sortie d'un test). Un chiffre provisoire est marqué comme tel.
+
+### Commits et PR
+
+- Messages de commit en français, courts, au format `type: description` (voir `05_workflow_git.md`).
+- Aucune mention d'outil d'IA dans les commits ni les PR : pas de `Co-Authored-By`, pas de « Generated with ». La déclaration d'usage est dans le README, une seule fois.
+- Description de PR : `Problème`, `Solution`, `Comment tester`, `Vérification`, avec des puces d'une ligne. Ne jamais laisser la description vide.
+
 ## Git et artefacts
 
 - Ne jamais committer : `*.o`, binaires, `build/`, `.obsidian/*`, `.DS_Store`.
@@ -168,7 +199,7 @@ clean:    # supprime les .o et binaires
 ## Definition of Done (pour un module)
 
 1. `.h` + `.c` avec header guard.
-2. Fonctions documentées (commentaires français).
+2. Fonctions documentées dans le `.h`, commentaires en français qui respectent le style d'écriture ci-dessus.
 3. Tests unitaires présents et verts (`make test`).
 4. Aucun warning (`-Werror`).
 5. Pas de fuite mémoire (valgrind si disponible).
