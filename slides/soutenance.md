@@ -93,7 +93,7 @@ Louisan Tchitoula · Sofia <span class="todo">NOM</span> · Faustine <span class
 - `nodes.csv`, `edges.csv`, `meta.txt`, en pleine précision
 
 </div>
-<div><img src="img/lyon_2000.png" alt="Réseau routier de Lyon, R = 2000 m" style="max-height:440px"><div class="note">Lyon, R = 2000 m : 1 886 carrefours, 3 021 rues</div></div>
+<div><img src="img/lyon_2000.png" alt="Réseau routier de Lyon, R = 2000 m" style="max-height:440px"><div class="note">Lyon, R = 2000 m : 1 886 nœuds, 3 021 rues</div></div>
 </div>
 
 <!-- Partie 2 : presentation/02_donnees_osm.md -->
@@ -102,7 +102,7 @@ Louisan Tchitoula · Sofia <span class="todo">NOM</span> · Faustine <span class
 
 # Le graphe en C
 
-- Liste d'adjacence : 2 à 3 rues par intersection
+- Liste d'adjacence : environ 3 rues par nœud
 - Pour nos 5 344 nœuds : matrice V × V de `double` = 228 Mo, liste d'adjacence < 1 Mo
 - Graphe non orienté : chaque rue dans les deux sens
 
