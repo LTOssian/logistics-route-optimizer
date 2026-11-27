@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
+#include <limits.h>
 
 static void usage(void) {
   printf("usage : lro <commande> ...\n");
@@ -15,11 +17,13 @@ static void usage(void) {
   printf("  cvrp                                 (phase 6)\n");
 }
 
-/* atoi renverrait 0 pour "abc" : strtol permet de refuser ce cas */
+/* strtol et pas atoi : atoi renvoie 0 pour "abc" et 4 pour "4x", sans erreur. */
 static int parse_node(const char *text, int *out) {
   char *end;
+  errno = 0;
   long value = strtol(text, &end, 10);
-  if (end == text || *end != '\0' || value < 0 || value > INT_MAX)
+  if (errno != 0 || end == text || *end != '\0' || value < INT_MIN ||
+      value > INT_MAX)
     return 0;
   *out = (int)value;
   return 1;
@@ -44,7 +48,7 @@ static int cmd_path(int argc, char **argv) {
   int source;
   int target;
   if (!parse_node(argv[3], &source) || !parse_node(argv[4], &target)) {
-    fprintf(stderr, "erreur : source et cible doivent etre des entiers >= 0\n");
+    fprintf(stderr, "erreur : source et cible doivent etre des entiers\n");
     return 1;
   }
 
