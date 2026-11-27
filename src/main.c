@@ -2,7 +2,6 @@
 #include "dijkstra.h"
 #include "graph.h"
 
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,8 +57,9 @@ static int cmd_path(int argc, char **argv) {
     return 1;
   }
 
-  if (source >= graph->node_count || target >= graph->node_count) {
-    fprintf(stderr, "erreur : les noeuds doivent etre entre 0 et %d\n",
+  if (source < 0 || source >= graph->node_count || target < 0 ||
+      target >= graph->node_count) {
+    fprintf(stderr, "erreur : un noeud est hors bornes (attendu : 0 a %d)\n",
             graph->node_count - 1);
     graph_free(graph);
     return 1;
