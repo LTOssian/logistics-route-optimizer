@@ -92,7 +92,7 @@ docker compose run --rm dev python scripts/osm_to_csv.py --overpass-url <miroir>
 - [x] Notes de lecture : Dijkstra, A\*, Contraction Hierarchies
 - [x] Décisions techniques et plan validés
 - [x] Phase 1 — Dijkstra sur graphe jouet
-- [ ] Phase 2 — A\*
+- [x] Phase 2 — A\*
 - [ ] Phase 3 — pipeline OSM
 - [ ] Phase 4 — matrice de distances
 - [ ] Phase 5 — TSP
