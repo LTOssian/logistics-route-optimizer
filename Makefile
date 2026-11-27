@@ -15,7 +15,6 @@ TEST_ORACLE   = $(BUILD)/test_oracle
 TEST_EXPECTED = $(BUILD)/test_expected
 TEST_DISTANCE_MATRIX = $(BUILD)/test_distance_matrix
 TEST_POINTS   = $(BUILD)/test_points
-
 TEST_ASTAR    = $(BUILD)/test_astar
 TEST_BINS     = $(TEST_GRAPH) $(TEST_DIJKSTRA) $(TEST_HEAP) $(TEST_RNG) $(TEST_ORACLE) $(TEST_EXPECTED) $(TEST_DISTANCE_MATRIX) $(TEST_POINTS) $(TEST_ASTAR)
 
@@ -50,6 +49,7 @@ $(TEST_DISTANCE_MATRIX): $(LIB_SRC) src/distance_matrix.c tests/test_distance_ma
 
 $(TEST_POINTS): src/graph.c src/points.c src/rng.c tests/test_points.c src/graph.h src/points.h src/rng.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -o $@ src/graph.c src/points.c src/rng.c tests/test_points.c $(LDLIBS)
+	
 $(TEST_ASTAR): $(LIB_SRC) src/rng.c tests/test_astar.c $(LIB_HDR) src/rng.h | $(BUILD)
 	$(CC) $(CFLAGS) -Isrc -o $@ $(LIB_SRC) src/rng.c tests/test_astar.c $(LDLIBS)
 
@@ -64,6 +64,7 @@ test: $(LRO) $(TEST_BINS)
 	./$(TEST_POINTS)
 	./$(TEST_ASTAR)
 	./$(LRO) path data/toy/toy1.csv 0 4 | grep -q "distance = 7.00"
+	./$(LRO) path data/toy/toy1.csv 0 4 --astar data/toy/toy1_nodes.csv | grep -q "distance = 7.00"
 	@echo "=> test CLI : OK"
 
 clean:

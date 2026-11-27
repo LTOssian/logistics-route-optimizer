@@ -1,26 +1,52 @@
+#include "astar.h"
 #include "dijkstra.h"
 #include "graph.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 static void usage(void) {
   printf("usage : lro <commande> ...\n");
-  printf("  path <graphe.csv> <source> <cible>   plus court chemin\n");
+  printf("  path <graphe.csv> <source> <cible> [--astar <nodes.csv>]\n");
+  printf("                                       plus court chemin\n");
   printf("  tsp                                  (phase 5)\n");
   printf("  cvrp                                 (phase 6)\n");
 }
 
-/* lro path <graphe.csv> <source> <cible> */
+/* atoi renverrait 0 pour "abc" : strtol permet de refuser ce cas */
+static int parse_node(const char *text, int *out) {
+  char *end;
+  long value = strtol(text, &end, 10);
+  if (end == text || *end != '\0' || value < 0 || value > INT_MAX)
+    return 0;
+  *out = (int)value;
+  return 1;
+}
+
+/* lro path <graphe.csv> <source> <cible> [--astar <nodes.csv>] */
 static int cmd_path(int argc, char **argv) {
-  if (argc != 5) {
+  if (argc != 5 && argc != 7) {
     usage();
     return 1;
   }
 
-  int source = atoi(argv[3]);
-  int target = atoi(argv[4]);
+  const char *nodes_path = NULL;
+  if (argc == 7) {
+    if (strcmp(argv[5], "--astar") != 0) {
+      usage();
+      return 1;
+    }
+    nodes_path = argv[6];
+  }
+
+  int source;
+  int target;
+  if (!parse_node(argv[3], &source) || !parse_node(argv[4], &target)) {
+    fprintf(stderr, "erreur : source et cible doivent etre des entiers >= 0\n");
+    return 1;
+  }
 
   Graph *graph = graph_load_csv(argv[2]);
   if (graph == NULL) {
@@ -28,15 +54,22 @@ static int cmd_path(int argc, char **argv) {
     return 1;
   }
 
-  if (source < 0 || source >= graph->node_count || target < 0 ||
-      target >= graph->node_count) {
+  if (source >= graph->node_count || target >= graph->node_count) {
     fprintf(stderr, "erreur : les noeuds doivent etre entre 0 et %d\n",
             graph->node_count - 1);
     graph_free(graph);
     return 1;
   }
 
-  DijkstraResult *result = dijkstra_query(graph, source, target);
+  if (nodes_path != NULL && !graph_load_nodes_csv(graph, nodes_path)) {
+    fprintf(stderr, "erreur : impossible de charger '%s'\n", nodes_path);
+    graph_free(graph);
+    return 1;
+  }
+
+  DijkstraResult *result = (nodes_path != NULL)
+                               ? astar(graph, source, target)
+                               : dijkstra_query(graph, source, target);
   if (result == NULL) {
     fprintf(stderr, "erreur : le calcul a echoue\n");
     graph_free(graph);

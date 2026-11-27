@@ -65,6 +65,7 @@ make clean  # nettoie les artefacts
 
 ```sh
 docker compose run --rm dev ./build/lro path data/toy/toy1.csv 0 4
+docker compose run --rm dev ./build/lro path data/toy/toy1.csv 0 4 --astar data/toy/toy1_nodes.csv
 ```
 
 ## Données de Lyon
