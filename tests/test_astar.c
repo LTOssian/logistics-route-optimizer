@@ -175,7 +175,7 @@ static Graph *make_geometric_graph(Rng *rng, int n) {
       }
       picked[k] = best;
       /* poids >= haversine : heuristique admissible */
-      double weight = best_distance * (1.0 + 0.5 * rng_double(rng));
+      double weight = best_distance * (1.0 + rng_double(rng));
       if (!graph_add_edge(graph, node, best, weight) ||
           !graph_add_edge(graph, best, node, weight)) {
         graph_free(graph);
