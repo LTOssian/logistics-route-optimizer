@@ -239,10 +239,73 @@ static void test_random_pairs(void) {
   print_suite_result("test_random_pairs");
 }
 
+/* --- suite 4 : graphes de Lyon --- */
+
+static void check_lyon(const char *label, const char *edges, const char *nodes, int pairs) {
+  printf("%s\n", label);
+
+  Graph *graph = graph_load_csv(edges);
+  expect_int("edges.csv charge", graph != NULL, 1);
+  if (graph == NULL) {
+    print_suite_result(label);
+    return;
+  }
+  if (!graph_load_nodes_csv(graph, nodes)) {
+    expect_int("nodes.csv charge", 0, 1);
+    graph_free(graph);
+    print_suite_result(label);
+    return;
+  }
+
+  Rng rng;
+  rng_seed(&rng, 42);
+
+  int mismatches = 0;
+  long settled_astar = 0;
+  long settled_dijkstra = 0;
+
+  for (int index = 0; index < pairs; index++) {
+    int source = rng_int(&rng, graph->node_count);
+    int target = rng_int(&rng, graph->node_count);
+
+    DijkstraResult *a = astar(graph, source, target);
+    DijkstraResult *d = dijkstra_query(graph, source, target);
+    if (a == NULL || d == NULL) {
+      mismatches++;
+    } else {
+      if (!same_distance(a->distances[target], d->distances[target]))
+        mismatches++;
+      settled_astar += a->settled_count;
+      settled_dijkstra += d->settled_count;
+    }
+    dijkstra_result_free(a);
+    dijkstra_result_free(d);
+  }
+
+  printf("  settled total : astar = %ld, dijkstra_query = %ld (%.1f %%)\n",
+         settled_astar, settled_dijkstra,
+         100.0 * (double)settled_astar / (double)settled_dijkstra);
+
+  expect_int("0 difference de distance", mismatches, 0);
+  expect_int("A* ferme moins de noeuds que dijkstra_query",
+             settled_astar < settled_dijkstra, 1);
+
+  graph_free(graph);
+  print_suite_result(label);
+}
+
+static void test_lyon(void) {
+  check_lyon("test_lyon_500", "data/osm/lyon_500/edges.csv",
+             "data/osm/lyon_500/nodes.csv", 500);
+  check_lyon("test_lyon_2000", "data/osm/lyon_2000/edges.csv",
+             "data/osm/lyon_2000/nodes.csv", 200);
+}
+
 int main(void) {
   test_haversine();
   test_toy1();
   test_random_pairs();
+  test_lyon();
 
   printf("Toutes les suites sont terminees (%d erreurs).\n", total_errors);
   return (total_errors == 0) ? 0 : 1;
